@@ -106,7 +106,7 @@ def find_pic_loop(image,delta_color = "020202",click_en = 1,offsetx = 0,offsety 
                             break
             return image_pos_find
         else:
-            time.wait(wait_delta)
+            time.sleep(wait_delta)
 
 """
 根据找图结果得到第n个位置函数
