@@ -6,18 +6,42 @@ print(dm.Ver())
 regInfoList = regInfoFile.read().split('\n')
 dm.SetPath("D:\dm110")
 dm_ret = dm.Reg(regInfoList[0],regInfoList[1])
+"""
+绑定模拟器函数
+Parameters:
+  type - 模拟器类型 1：blustacks 2：逍遥安卓
+Returns:
+  成功：返回 1
+  失败：返回 0
+Raises:
+"""
+def WindowBind(type):
+    if(type == 1):
+        hwnd = dm.FindWindow('BS2CHINAUI','Bluestacks App Player')
+        print("find bluestack! hwnd: " + str(hwnd))
+        hwnds = hwnd.split(',')
+        for id in hwnds:
+            print(str(id) + ": " + dm.GetWindowClass(id) + " titile: " + dm.GetWindowTitle(id))
+            if (dm.GetWindowClass(id) == "WindowsForms10.Window.8.app.0.34f5582_r14_ad1" and dm.GetWindowTitle(id) == ""):
+                ret = dm.BindWindowEx(id, "gdi", "dx", "dx", "dx", 0)
+                if(ret != 0):
+                    print("bind success!")
+                print(ret)
+    elif(type == 2):
+        hwnd = dm.FindWindow('Qt5QWindowIcon','逍遥安卓 2.9.1 - MEmu')
+        hwnd = dm.EnumWindow(hwnd,"Qt5QWindowIcon","RenderWindowWindow",0)
+        print("find xiaoyao! hwnd: " + str(hwnd))
+        hwnds = hwnd.split(',')
+        for id in hwnds:
+            print(str(id) + ": " + dm.GetWindowClass(id) + " titile: " + dm.GetWindowTitle(id))
+            if (dm.GetWindowClass(id) == "Qt5QWindowIcon" and dm.GetWindowTitle(id) == "RenderWindowWindow"):
+                ret = dm.BindWindowEx(id, "gdi", "dx", "dx", "dx", 0)
+                if (ret != 0):
+                    print("bind success!")
+                print(ret)
+    else:
+        return 0
 
-def WindowBind():
-    hwnd = dm.FindWindow('BS2CHINAUI','Bluestacks App Player')
-    print("find bluestack! hwnd: " + str(hwnd))
-    hwnd = dm.EnumWindow(hwnd,"","",0)
-    #print("hwnd: " + str(hwnd))
-    hwnds = hwnd.split(',')
-    for id in hwnds:
-        print(str(id) + ": " + dm.GetWindowClass(id) + " titile: " + dm.GetWindowTitle(id))
-        if(dm.GetWindowClass(id) == "WindowsForms10.Window.8.app.0.34f5582_r14_ad1" and dm.GetWindowTitle(id) == ""):
-            ret = dm.BindWindowEx(id, "gdi", "dx", "dx", "dx", 0)
-            print(ret)
 """
 找图接口函数
 Parameters:
@@ -55,7 +79,7 @@ Returns:
   失败：返回 ""
 Raises:
 """
-def find_pic_loop(image,delta_color = "020202",click_en = 1,offsetx = 0,offsety = 0,mode = 0,x1 = 0, y1 = 0, x2 = 960, y2 = 720, sim = 0.8,times = 100, wait_delta = 3):
+def find_pic_loop(image,delta_color = "020202",click_en = 1,offsetx = 0,offsety = 0,mode = 0,x1 = 0, y1 = 0, x2 = 960, y2 = 720, sim = 0.8,times = 100, wait_delta = 3, success_image = ""):
     for i in range(times):
         image_pos_find = find_pic(image,delta_color = delta_color,offsetx = offsetx,offsety = offsety,mode = mode,x1 = x1, y1 = y1, x2 = x2, y2 = y2, sim = sim)
         if(image_pos_find != ""):
@@ -67,7 +91,20 @@ def find_pic_loop(image,delta_color = "020202",click_en = 1,offsetx = 0,offsety 
                 y = int(find[2])
                 dm.Moveto(x + offsetx, y + offsety)
                 dm.LeftClick()
-            return find
+
+                if(success_image != ""):
+                    while (True):
+                        print("finding success_image: " + success_image)
+                        find = find_pic(success_image, delta_color=delta_color, offsetx=offsetx, offsety=offsety, mode=mode, x1=x1, y1=y1,x2=x2, y2=y2, sim=sim)
+                        if(find == ""):
+                            find = find_pic(image,delta_color = delta_color,offsetx = offsetx,offsety = offsety,mode = mode,x1 = x1, y1 = y1, x2 = x2, y2 = y2, sim = sim)
+                            if(find != ""):
+                                dm.LeftClick()
+                            else:
+                                continue
+                        else:
+                            break
+            return image_pos_find
         else:
             time.wait(wait_delta)
 
