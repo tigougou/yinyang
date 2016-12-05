@@ -1,8 +1,8 @@
 import explore.explore_function as expl
-import util.dm as utdm
-import common.common as com
+from util.dm import *
+from common.common import *
 
-utdm.WindowBind()
+WindowBind()
 
 
 

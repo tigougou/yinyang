@@ -1,6 +1,7 @@
 #! /usr/bin/python
 # coding = utf-8
-
+from util.dm import *
+import time
 """ 本模块包括所有通用基本功能函数及通用全局变量 """
 '''
 全局状态字典
@@ -16,13 +17,20 @@ status_dic = { "secen":"",
 Parameters:
   state_next - 下一个场景标志路径
   pic_click - 进入下一个场景要点击的图片
-  delaytime - 切换场景等待时间
-  timeout - 切换场景超时时间
+  tryTimes - 切换场景超时时间(单位：ms)
 Returns:
   成功：1
   失败：0
 Raises:
 """
+def scene_chang_handle(state_next,pic_click,tryTimes = 2000):
+    for  i in range(tryTimes):
+        find_pic_loop(pic_click)
+        ret = find_pic(state_next)
+        if ret != "":
+            return 1
+        time.wait(0.001)
+    return 0
 
 """
 回合开始处理功能函数
