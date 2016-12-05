@@ -11,6 +11,18 @@ Parameters:
 status_dic = { "secen":"",
                "physicalPower": 0 }
 
+"""
+场景切换功能函数
+Parameters:
+  state_next - 下一个场景标志路径
+  pic_click - 进入下一个场景要点击的图片
+  delaytime - 切换场景等待时间
+  timeout - 切换场景超时时间
+Returns:
+  成功：1
+  失败：0
+Raises:
+"""
 
 """
 回合开始处理功能函数
