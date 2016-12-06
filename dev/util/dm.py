@@ -19,14 +19,21 @@ def WindowBind(type):
     if(type == 1):
         hwnd = dm.FindWindow('BS2CHINAUI','Bluestacks App Player')
         print("find bluestack! hwnd: " + str(hwnd))
+        hwnd = dm.EnumWindow(hwnd, "", "", 0)
         hwnds = hwnd.split(',')
         for id in hwnds:
             print(str(id) + ": " + dm.GetWindowClass(id) + " titile: " + dm.GetWindowTitle(id))
-            if (dm.GetWindowClass(id) == "WindowsForms10.Window.8.app.0.34f5582_r14_ad1" and dm.GetWindowTitle(id) == ""):
-                ret = dm.BindWindowEx(id, "gdi", "dx", "dx", "dx", 0)
+            if (dm.GetWindowClass(id) == "WindowsForms10.Window.8.app.0.1e84ccb_r14_ad1" and dm.GetWindowTitle(id) == ""):
+                print("binding hwnd: " + str(id))
+                ret = dm.BindWindowEx(id, "dx2", "dx", "dx","dx", 0)
                 if(ret != 0):
                     print("bind success!")
-                print(ret)
+                    return 1
+                else:
+                    print("bind failed")
+                    return 0
+
+        print("bind failed")
     elif(type == 2):
         hwnd = dm.FindWindow('Qt5QWindowIcon','逍遥安卓 2.9.1 - MEmu')
         hwnd = dm.EnumWindow(hwnd,"Qt5QWindowIcon","RenderWindowWindow",0)
@@ -35,9 +42,11 @@ def WindowBind(type):
         for id in hwnds:
             print(str(id) + ": " + dm.GetWindowClass(id) + " titile: " + dm.GetWindowTitle(id))
             if (dm.GetWindowClass(id) == "Qt5QWindowIcon" and dm.GetWindowTitle(id) == "RenderWindowWindow"):
-                ret = dm.BindWindowEx(id, "gdi", "dx", "dx", "dx", 0)
+                ret = dm.BindWindowEx(id, "dx.graphic.opengl", "dx", "dx", "dx", 0)
                 if (ret != 0):
                     print("bind success!")
+                else:
+                    print("bind failed")
                 print(ret)
     else:
         return 0
@@ -58,6 +67,7 @@ Raises:
 """
 def find_pic(image,delta_color = "000000",offsetx = 0,offsety = 0,mode = 0,x1 = 0, y1 = 0, x2 = 1280, y2 = 720, sim = 0.8):
     image_pos_find = dm.FindPicEx(x1, y1, x2, y2, image, delta_color, sim, mode)
+    print("finding image: " + image)
     if(not image_pos_find):
         return ""
     print('find pic: ' + image_pos_find)
