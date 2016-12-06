@@ -24,12 +24,12 @@ def WindowBind(type):
         hwnds = hwnd.split(',')
         for id in hwnds:
             print(str(id) + ": " + dm.GetWindowClass(id) + " titile: " + dm.GetWindowTitle(id))
-            if (dm.GetWindowClass(id) == "WindowsForms10.Window.8.app.0.1e84ccb_r14_ad1" and dm.GetWindowTitle(id) == ""):
+            if (dm.GetWindowClass(id).startwith("WindowsForms10.Window.8.app.") and dm.GetWindowTitle(id) == ""):
                 print("binding hwnd: " + str(id))
                 ret = dm.BindWindowEx(id, "dx2", "dx", "dx","dx", 0)
                 if(ret != 0):
                     print("bind success!")
-                    return 1
+                    return id
                 else:
                     print("bind failed")
                     return 0
@@ -46,9 +46,10 @@ def WindowBind(type):
                 ret = dm.BindWindowEx(id, "dx.graphic.opengl", "dx", "dx", "dx", 0)
                 if (ret != 0):
                     print("bind success!")
+                    return id
                 else:
                     print("bind failed")
-                print(ret)
+                    return 0
     else:
         return 0
 
@@ -92,7 +93,7 @@ Returns:
 Raises:
 """
 
-def find_pic_loop(image,delta_color = "000000",click_en = 1,offsetx = 0,offsety = 0,mode = 0,x1 = 0, y1 = 0, x2 = 1280, y2 = 720, sim = 0.8,times = 10, wait_delta = 0.1, success_image = ""):
+def find_pic_loop(image,delta_color = "000000",click_en = 1,offsetx = 0,offsety = 0,mode = 0,x1 = 0, y1 = 0, x2 = 1280, y2 = 720, sim = 0.8,times = 10, wait_delta = 0.1, success_image = "",click_wait = 1):
 
     for i in range(times):
         image_pos_find = find_pic(image,delta_color = delta_color,offsetx = offsetx,offsety = offsety,mode = mode,x1 = x1, y1 = y1, x2 = x2, y2 = y2, sim = sim)
@@ -114,6 +115,7 @@ def find_pic_loop(image,delta_color = "000000",click_en = 1,offsetx = 0,offsety 
                             find = find_pic(image,delta_color = delta_color,offsetx = offsetx,offsety = offsety,mode = mode,x1 = x1, y1 = y1, x2 = x2, y2 = y2, sim = sim)
                             if(find != ""):
                                 dm.LeftClick()
+                                time.sleep(1)
                             else:
                                 continue
                         else:
@@ -157,7 +159,8 @@ def left_up():
     return dm.LeftUp()
 def key_press_str(str,delay):
     return dm.KeyPressStr(str,delay)
-
+def send_string(hwnd, str):
+    return dm.SendString(hwnd, str)
 
 
 
