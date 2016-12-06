@@ -1,8 +1,28 @@
 #! /usr/bin/python
 # coding = utf-8
+from common.common import *
+
 
 """ 本模块包括所有探索基本功能函数 """
 
+
+"""
+章节选择功能函数
+Parameters:
+ chapter - 章节数 0-18
+Returns：
+  成功：1
+  失败：0
+Raises:
+"""
+def chapter_choose(chapter = 17):
+    """本函数调用前需要任务在探索场景下"""
+
+    #需要滚动来选定章节
+
+    chapter = "explore/chapter-" + str(chapter)+".bmp"
+    scene_chang_handle("explore/exploreflag2.bmp", chapter, sim=0.6, tryTimes=20)
+""""""
 """
 进入探索副本功能函数
 Parameters:
@@ -13,14 +33,17 @@ Returns:
   失败：0
 Raises:
 """
-def enter_explore(chapter, difficulty_mode):
+def enter_explore(chapter = 17, difficulty_mode = 0):
     """ 本函数调用前需要人物在探索场景下 """
     # 根据章节号找到对应的章节并点击
-
+    chapter_choose(chapter)
     # 选择对应难度并点击探索按钮进入
-
+    if difficulty_mode == 0:
+        scene_chang_handle("explore/normalflag.bmp", "explore/normal.bmp",sim = 0.8)
+    else:
+        scene_chang_handle("explore/normal.bmp","explore/normalflag.bmp",sim = 0.7 )
     # 进行进入成功判定
-
+    scene_chang_handle("explore/exploreEnterflag.bmp", "explore/exploreEnter.bmp",sim = 0.7)
 """
 找怪功能函数
 Parameters:
