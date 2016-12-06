@@ -18,7 +18,7 @@ Raises:
 def chapter_choose(chapter = 17):
     """本函数调用前需要任务在探索场景下"""
 
-    #需要滚动来选定章节
+    #判断当前章节，没有的话从头扫到尾
 
     chapter = "explore/chapter-" + str(chapter)+".bmp"
     scene_chang_handle("explore/exploreflag2.bmp", chapter, sim=0.6, tryTimes=20)
