@@ -17,19 +17,24 @@ status_dic = { "secen":"",
 Parameters:
   state_next - 下一个场景标志路径
   pic_click - 进入下一个场景要点击的图片
-  tryTimes - 切换场景超时时间(单位：ms)
+  delaytime -切换场景等待时间
+  tryTimes - 切换场景尝试次数
+  sim - 相似度
 Returns:
   成功：1
   失败：0
 Raises:
 """
-def scene_chang_handle(state_next,pic_click,tryTimes = 2000):
+def scene_chang_handle(state_next,pic_click,delaytime = 2,sim = 0.8,tryTimes = 20):
     for  i in range(tryTimes):
-        find_pic_loop(pic_click)
+        ret = find_pic_loop(pic_click,sim = sim,times = 1)
+        print(ret)
+        time.sleep(delaytime)
         ret = find_pic(state_next)
         if ret != "":
+            print("pic_click success")
             return 1
-        time.wait(0.001)
+    print("pic_click_fail")
     return 0
 
 """
