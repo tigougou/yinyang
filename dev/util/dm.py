@@ -56,7 +56,7 @@ Returns:
   失败：返回 ""
 Raises:
 """
-def find_pic(image,delta_color = "020202",offsetx = 0,offsety = 0,mode = 0,x1 = 0, y1 = 0, x2 = 960, y2 = 720, sim = 0.8):
+def find_pic(image,delta_color = "000000",offsetx = 0,offsety = 0,mode = 0,x1 = 0, y1 = 0, x2 = 1280, y2 = 720, sim = 0.8):
     image_pos_find = dm.FindPicEx(x1, y1, x2, y2, image, delta_color, sim, mode)
     if(not image_pos_find):
         return ""
@@ -74,12 +74,15 @@ Parameters:
   click_en - 是否点击 1：点击 其他：不点击
   times - 循环次数
   wait_delta - 等待间隔时间（秒为单位）
+  success_image - 点击成功判断标志
 Returns:
   成功：返回 "id,x,y|id,x,y..|id,x,y"
   失败：返回 ""
 Raises:
 """
-def find_pic_loop(image,delta_color = "020202",click_en = 1,offsetx = 0,offsety = 0,mode = 0,x1 = 0, y1 = 0, x2 = 960, y2 = 720, sim = 0.8,times = 100, wait_delta = 3, success_image = ""):
+
+def find_pic_loop(image,delta_color = "000000",click_en = 1,offsetx = 0,offsety = 0,mode = 0,x1 = 0, y1 = 0, x2 = 1280, y2 = 720, sim = 0.8,times = 10, wait_delta = 0.1, success_image = ""):
+
     for i in range(times):
         image_pos_find = find_pic(image,delta_color = delta_color,offsetx = offsetx,offsety = offsety,mode = mode,x1 = x1, y1 = y1, x2 = x2, y2 = y2, sim = sim)
         if(image_pos_find != ""):
