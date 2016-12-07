@@ -41,13 +41,14 @@ def log(hwnd,account = "",password = "",region = 0):
             # 根据博远雅裤子的图片的相对位移来点击进入游戏
             find_pic_loop(r"log/jinruyouxi.bmp",click_en=1, offsetx=399, offsety=151, wait_delta=1,success_image="log/dianjijinru.bmp|log/jieshou.bmp", times=5,sim = 0.9)
             find_pic_loop(r"log/jieshou.bmp", click_en=1, offsetx=399, offsety=151, wait_delta=1, times=1)
-            find_pic_loop(r"log/dianjijinru.bmp", click_en=1, offsetx=399, offsety=151, wait_delta=1, times=1,success_image="log/logqueren.bmp",sim = 1.0)
+            find_pic_loop(r"log/dianjijinru.bmp", click_en=1, offsetx=0, offsety=0, wait_delta=1, times=1,
+                          success_image="log/logqueren.bmp|log/logqueren1.bmp", sim=0.9)
             print("log success")
             return 1
     else:
         find_pic_loop(r"log/jinruyouxi.bmp", click_en=1, offsetx=399, offsety=151, wait_delta=1, times=5)
         find_pic_loop(r"log/jieshou.bmp", click_en=1, offsetx=399, offsety=151, wait_delta=1, times=5)
-        find_pic_loop(r"log/dianjijinru.bmp", click_en=1, offsetx=399, offsety=151, wait_delta=1, times=1,success_image="log/logqueren.bmp|log/logqueren1.bmp",sim = 0.9)
+        find_pic_loop(r"log/dianjijinru.bmp", click_en=1, offsetx=0, offsety=0, wait_delta=1, times=1,success_image="log/logqueren.bmp|log/logqueren1.bmp",sim = 0.9)
         print("log success")
         return 1
 
@@ -55,9 +56,9 @@ def log(hwnd,account = "",password = "",region = 0):
 
 #绑定逍遥窗口
 hwnd = bind(2)
-change_scene('explore')
-#account_list = open(r"D:\dm110\account.txt").read().split('\n')
-#log(hwnd, account_list[0],account_list[1])
+#change_scene('explore')
+account_list = open(r"D:\dm110\account.txt").read().split('\n')
+log(hwnd, account_list[0],account_list[1])
 #log(hwnd)
 
 dm.UnBindWindow()
