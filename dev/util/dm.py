@@ -18,13 +18,12 @@ Raises:
 def WindowBind(type):
     if(type == 1):
         hwnd = dm.FindWindow('BS2CHINAUI','Bluestacks App Player')
-        hwnd = dm.EnumWindow(hwnd, "", "WindowsForms10.Window.8.app.0.34f5582_r14_ad1", 0)
         print("find bluestack! hwnd: " + str(hwnd))
         hwnd = dm.EnumWindow(hwnd, "", "", 0)
         hwnds = hwnd.split(',')
         for id in hwnds:
             print(str(id) + ": " + dm.GetWindowClass(id) + " titile: " + dm.GetWindowTitle(id))
-            if (dm.GetWindowClass(id) == "WindowsForms10.Window.8.app.0.1e84ccb_r14_ad1" and dm.GetWindowTitle(id) == ""):
+            if (dm.GetWindowClass(id) == "WindowsForms10.Window.8.app.0.34f5582_r14_ad1" and dm.GetWindowTitle(id) == ""):
                 print("binding hwnd: " + str(id))
                 ret = dm.BindWindowEx(id, "dx2", "dx", "dx","dx", 0)
                 if(ret != 0):

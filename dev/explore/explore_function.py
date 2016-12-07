@@ -22,7 +22,8 @@ def chapter_choose(chapter = 17):
 
     chapter = "explore/chapter-" + str(chapter)+".bmp"
     scene_chang_handle("explore/exploreflag2.bmp", chapter, sim=0.6, tryTimes=20)
-""""""
+
+
 """
 进入探索副本功能函数
 Parameters:
@@ -37,13 +38,13 @@ def enter_explore(chapter = 17, difficulty_mode = 0):
     """ 本函数调用前需要人物在探索场景下 """
     # 根据章节号找到对应的章节并点击
     chapter_choose(chapter)
-    # 选择对应难度并点击探索按钮进入
+    # 选择对应难度
     if difficulty_mode == 0:
-        scene_chang_handle("explore/normalflag.bmp", "explore/normal.bmp",sim = 0.8)
+        scene_chang_handle("explore/normalflag.bmp", "explore/normal.bmp")
     else:
-        scene_chang_handle("explore/normal.bmp","explore/normalflag.bmp",sim = 0.7 )
-    # 进行进入成功判定
-    scene_chang_handle("explore/exploreEnterflag.bmp", "explore/exploreEnter.bmp",sim = 0.7)
+        scene_chang_handle("explore/normal.bmp","explore/normalflag.bmp")
+    # 点击探索按钮进入进行进入成功判定
+    scene_chang_handle("explore/exploreEnterflag.bmp", "explore/exploreEnter.bmp")
 """
 找怪功能函数
 Parameters:
