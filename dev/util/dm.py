@@ -112,9 +112,15 @@ def find_pic_loop(image,delta_color = "000000",click_en = 1,offsetx = 0,offsety 
                         print("finding success_image: " + success_image)
                         find = find_pic(success_image, delta_color=delta_color, offsetx=offsetx, offsety=offsety, mode=mode, x1=x1, y1=y1,x2=x2, y2=y2, sim=sim)
                         if(find == ""):
-                            find = find_pic(image,delta_color = delta_color,offsetx = offsetx,offsety = offsety,mode = mode,x1 = x1, y1 = y1, x2 = x2, y2 = y2, sim = sim)
+                            find = find_pic(image,delta_color = delta_color,mode = mode,x1 = x1, y1 = y1, x2 = x2, y2 = y2, sim = sim)
                             if(find != ""):
+                                find = find.split('|')
+                                find = find[0].split(',')
+                                x = int(find[1])
+                                y = int(find[2])
+                                dm.Moveto(x+offsetx , y+offsety)
                                 dm.LeftClick()
+                                print("left click!")
                                 time.sleep(1)
                             else:
                                 continue
@@ -123,6 +129,7 @@ def find_pic_loop(image,delta_color = "000000",click_en = 1,offsetx = 0,offsety 
             return image_pos_find
         else:
             time.sleep(wait_delta)
+    return ""
 
 """
 根据找图结果得到第n个位置函数

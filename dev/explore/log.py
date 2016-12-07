@@ -1,4 +1,5 @@
 from util.dm import *
+from explore.glb import *
 import time
 
 def bind(simulater):
@@ -38,7 +39,7 @@ def log(hwnd,account = "",password = "",region = 0):
         else:
             #登录成功
             # 根据博远雅裤子的图片的相对位移来点击进入游戏
-            find_pic_loop(r"log/jinruyouxi.bmp",click_en=1, offsetx=399, offsety=151, wait_delta=1, times=5)
+            find_pic_loop(r"log/jinruyouxi.bmp",click_en=1, offsetx=399, offsety=151, wait_delta=1,success_image="log/dianjijinru.bmp|log/jieshou.bmp", times=5,sim = 0.9)
             find_pic_loop(r"log/jieshou.bmp", click_en=1, offsetx=399, offsety=151, wait_delta=1, times=1)
             find_pic_loop(r"log/dianjijinru.bmp", click_en=1, offsetx=399, offsety=151, wait_delta=1, times=1,success_image="log/logqueren.bmp",sim = 1.0)
             print("log success")
@@ -46,7 +47,7 @@ def log(hwnd,account = "",password = "",region = 0):
     else:
         find_pic_loop(r"log/jinruyouxi.bmp", click_en=1, offsetx=399, offsety=151, wait_delta=1, times=5)
         find_pic_loop(r"log/jieshou.bmp", click_en=1, offsetx=399, offsety=151, wait_delta=1, times=5)
-        find_pic_loop(r"log/dianjijinru.bmp", click_en=1, offsetx=399, offsety=151, wait_delta=1, times=1,success_image="log/logqueren.bmp",sim = 0.9)
+        find_pic_loop(r"log/dianjijinru.bmp", click_en=1, offsetx=399, offsety=151, wait_delta=1, times=1,success_image="log/logqueren.bmp|log/logqueren1.bmp",sim = 0.9)
         print("log success")
         return 1
 
@@ -54,8 +55,9 @@ def log(hwnd,account = "",password = "",region = 0):
 
 #绑定逍遥窗口
 hwnd = bind(2)
-account_list = open(r"D:\dm110\account.txt").read().split('\n')
+#account_list = open(r"D:\dm110\account.txt").read().split('\n')
 #log(hwnd, account_list[0],account_list[1])
-log(hwnd)
-
+#log(hwnd)
+yard = Scene('yard',"","")
+yard.fromYardToExplore()
 dm.UnBindWindow()
