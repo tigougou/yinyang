@@ -55,7 +55,7 @@ def log(hwnd,account = "",password = "",region = 0):
 
 #绑定逍遥窗口
 hwnd = bind(2)
-
+change_scene('explore')
 #account_list = open(r"D:\dm110\account.txt").read().split('\n')
 #log(hwnd, account_list[0],account_list[1])
 #log(hwnd)
