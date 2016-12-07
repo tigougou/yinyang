@@ -35,11 +35,35 @@ Raises:
 def glb_init():
     # 庭院对象,无高层对象
     global yard
-    yard = Scene('yard', {}, {"explore": Scene.fromYardToExplore})
-    # 当前场景对象，进入游戏后，默认画面为庭院
     global cur_scene
+    yard = Scene('yard', "", {"explore": Scene.fromYardToExplore})
+    # 当前场景对象，进入游戏后，默认画面为庭院
     cur_scene = yard
+def change_scene(next_scene):
+    global cur_scene
+    #最多进行100次
+    for i in range(100):
+        #已经到指定场景
+        if cur_scene.name == next_scene:
+            return 1
+        #指定场景在下层
+        elif next_scene in cur_scene.lowerSceneDict.keys():
+            cur_scene.lowerSceneDict[next_scene]()
+        #已经到达最顶层，切顶层无指定层的记录
+        elif cur_scene.higherSceneDict == "":
+            return 0
+        #向顶层走
+        else:
+            higher_scene = cur_scene.higherSceneDict.keys[0]
+            cur_scene.higherSceneDict[higher_scene]()
+
+
+
+
+
+
 glb_init()
+
 
 
 
