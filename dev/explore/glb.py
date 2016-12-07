@@ -7,6 +7,7 @@ global cur_scene
 class Scene:
     global cur_scene
     global scene_dic
+    scene_dic = {}
     def __init__(self,name,higherSceneDict,lowerSceneDict):
         self.higherSceneDict = higherSceneDict
         self.lowerSceneDict = lowerSceneDict
@@ -48,13 +49,14 @@ def glb_init():
     global cur_scene
     global yard
     global explore
+    global scene_dic
     yard = Scene('yard', "", {"explore": Scene.fromYardToExplore})
+    scene_dic[yard.name] = yard
     explore = Scene('explore',{'yard':""}, {} )
     # 当前场景对象，进入游戏后，默认画面为庭院
     cur_scene = yard
 glb_init()
 
-scene_dic = {'yard':yard, 'explore':explore}
 
 
 
