@@ -6,7 +6,7 @@ from util.dm import *
 
 
 
-
+global yard
 class Scene:
     def __init__(self,name,higherSceneDict,lowerSceneDict):
         self.higherSceneDict = higherSceneDict
@@ -18,7 +18,29 @@ class Scene:
             print('enter explore success!')
 
 
-yard = Scene('yard',{},{"explore":Scene.fromYardToExplore})
+
+
+#探索场景
+#结界突破场景
+#章节场景
+"""
+全局变量初始化函数
+Parameters:
+
+Returns:
+  成功：1
+  失败：0
+Raises:
+"""
+def glb_init():
+    # 庭院对象,无高层对象
+    global yard
+    yard = Scene('yard', {}, {"explore": Scene.fromYardToExplore})
+    # 当前场景对象，进入游戏后，默认画面为庭院
+    global cur_scene
+    cur_scene = yard
+glb_init()
+
 
 
 
