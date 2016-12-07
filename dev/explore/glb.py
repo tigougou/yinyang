@@ -20,8 +20,8 @@ class Scene:
 '''
 添加场景流程：
 首先定义一个全局变量：如global yard
-然后再glb_init函数中进行初始化： 如yard = Scene('yard', "", {"explore": Scene.fromYardToExplore})
-将名字写入scene_dic字典中：'yard':yard
+然后再glb_init函数中进行初始化： 添加global yard 并进行定义 如yard = Scene('yard', "", {"explore": Scene.fromYardToExplore})
+在glb_init函数中将名字写入scene_dic字典中：scene_dic[yard.name] = yard
 添加scene类的对应函数def fromYardToExplore(self):
 '''
 
