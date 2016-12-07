@@ -58,6 +58,5 @@ hwnd = bind(2)
 #account_list = open(r"D:\dm110\account.txt").read().split('\n')
 #log(hwnd, account_list[0],account_list[1])
 #log(hwnd)
-yard = Scene('yard',"","")
-yard.fromYardToExplore()
+
 dm.UnBindWindow()
