@@ -18,17 +18,25 @@ Raises:
 def WindowBind(type):
     if(type == 1):
         hwnd = dm.FindWindow('BS2CHINAUI','Bluestacks App Player')
+<<<<<<< HEAD
+=======
+        #hwnd = dm.EnumWindow(hwnd, "", "WindowsForms10.Window.8.app.0.34f5582_r14_ad1", 0)
+>>>>>>> refs/remotes/origin/master
         print("find bluestack! hwnd: " + str(hwnd))
         hwnd = dm.EnumWindow(hwnd, "", "", 0)
         hwnds = hwnd.split(',')
         for id in hwnds:
             print(str(id) + ": " + dm.GetWindowClass(id) + " titile: " + dm.GetWindowTitle(id))
+<<<<<<< HEAD
             if (dm.GetWindowClass(id) == "WindowsForms10.Window.8.app.0.34f5582_r14_ad1" and dm.GetWindowTitle(id) == ""):
+=======
+            if (dm.GetWindowClass(id).startswith("WindowsForms10.Window.8.app.") and dm.GetWindowTitle(id) == ""):
+>>>>>>> refs/remotes/origin/master
                 print("binding hwnd: " + str(id))
                 ret = dm.BindWindowEx(id, "dx2", "dx", "dx","dx", 0)
                 if(ret != 0):
                     print("bind success!")
-                    return 1
+                    return id
                 else:
                     print("bind failed")
                     return 0
@@ -45,9 +53,10 @@ def WindowBind(type):
                 ret = dm.BindWindowEx(id, "dx.graphic.opengl", "dx", "dx", "dx", 0)
                 if (ret != 0):
                     print("bind success!")
+                    return id
                 else:
                     print("bind failed")
-                print(ret)
+                    return 0
     else:
         return 0
 
@@ -91,7 +100,7 @@ Returns:
 Raises:
 """
 
-def find_pic_loop(image,delta_color = "000000",click_en = 1,offsetx = 0,offsety = 0,mode = 0,x1 = 0, y1 = 0, x2 = 1280, y2 = 720, sim = 0.8,times = 10, wait_delta = 0.1, success_image = ""):
+def find_pic_loop(image,delta_color = "000000",click_en = 1,offsetx = 0,offsety = 0,mode = 0,x1 = 0, y1 = 0, x2 = 1280, y2 = 720, sim = 0.8,times = 10, wait_delta = 0.1, success_image = "",click_wait = 1):
 
     for i in range(times):
         image_pos_find = find_pic(image,delta_color = delta_color,offsetx = offsetx,offsety = offsety,mode = mode,x1 = x1, y1 = y1, x2 = x2, y2 = y2, sim = sim)
@@ -110,9 +119,16 @@ def find_pic_loop(image,delta_color = "000000",click_en = 1,offsetx = 0,offsety 
                         print("finding success_image: " + success_image)
                         find = find_pic(success_image, delta_color=delta_color, offsetx=offsetx, offsety=offsety, mode=mode, x1=x1, y1=y1,x2=x2, y2=y2, sim=sim)
                         if(find == ""):
-                            find = find_pic(image,delta_color = delta_color,offsetx = offsetx,offsety = offsety,mode = mode,x1 = x1, y1 = y1, x2 = x2, y2 = y2, sim = sim)
+                            find = find_pic(image,delta_color = delta_color,mode = mode,x1 = x1, y1 = y1, x2 = x2, y2 = y2, sim = sim)
                             if(find != ""):
+                                find = find.split('|')
+                                find = find[0].split(',')
+                                x = int(find[1])
+                                y = int(find[2])
+                                dm.Moveto(x+offsetx , y+offsety)
                                 dm.LeftClick()
+                                print("left click!")
+                                time.sleep(1)
                             else:
                                 continue
                         else:
@@ -120,6 +136,7 @@ def find_pic_loop(image,delta_color = "000000",click_en = 1,offsetx = 0,offsety 
             return image_pos_find
         else:
             time.sleep(wait_delta)
+    return ""
 
 """
 根据找图结果得到第n个位置函数
@@ -156,7 +173,8 @@ def left_up():
     return dm.LeftUp()
 def key_press_str(str,delay):
     return dm.KeyPressStr(str,delay)
-
+def send_string(hwnd, str):
+    return dm.SendString(hwnd, str)
 
 
 
