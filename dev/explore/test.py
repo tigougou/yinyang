@@ -22,4 +22,4 @@ while(True):
         moveto(970, 542)
         left_click()
 scene_chang_handle("explore/exploreoutconfirm.bmp", "explore/exploreout.bmp",tryTimes=30)
-scene_chang_handle("explore/exploreflag.bmp", "exploreoutconfirm.bmp",tryTimes=30)
+scene_chang_handle("explore/exploreflag.bmp", "explore/exploreoutconfirm.bmp",tryTimes=30)
