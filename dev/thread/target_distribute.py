@@ -12,5 +12,6 @@ class exploreThread(threading.Thread):
             explore_mutex.release()
 
 if __name__ == '__main__':
-    print(time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
-)
+    hour = int(time.strftime('%H',time.localtime(time.time())))
+    minite = int(time.strftime('%M', time.localtime(time.time())))
+    if()
