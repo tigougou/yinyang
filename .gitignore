@@ -1,2 +1,3 @@
 *.xml
 dev/.idea/dev.iml
+*.pyc

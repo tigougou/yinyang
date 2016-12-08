@@ -15,14 +15,14 @@ Returns：
   失败：0
 Raises:
 """
-def chapter_choose(chapter = 16):
+def chapter_choose(chapter = 17):
     """本函数调用前需要任务在探索场景下"""
 
     #需要滚动来选定章节
 
     chapter = "explore/chapter-" + str(chapter)+".bmp"
     print(chapter)
-    scene_chang_handle("explore/exploreflag2.bmp", chapter, sim=1, tryTimes=20)
+    scene_chang_handle("explore/exploreflag2.bmp", chapter, tryTimes=20)
 """"""
 """
 进入探索副本功能函数
@@ -40,11 +40,11 @@ def enter_explore(chapter = 17 , difficulty_mode = 0):
     chapter_choose(chapter)
     # 选择对应难度并点击探索按钮进入
     if difficulty_mode == 0:
-        scene_chang_handle("explore/normalflag.bmp", "explore/normal.bmp",sim = 1)
+        scene_chang_handle("explore/normalflag.bmp", "explore/normal.bmp")
     else:
-        scene_chang_handle("explore/normal.bmp","explore/normalflag.bmp",sim = 1 )
+        scene_chang_handle("explore/normal.bmp","explore/normalflag.bmp")
     # 进行进入成功判定
-    scene_chang_handle("explore/exploreEnterflag.bmp", "explore/exploreEnter.bmp",sim = 1)
+    scene_chang_handle("explore/exploreEnterflag.bmp", "explore/exploreEnter.bmp")
 """
 找怪功能函数
 Parameters:
@@ -79,7 +79,7 @@ def find_monster(monster_type):
             win_flag = 1
             scene_chang_handle("explore/fightend_win_gift1.bmp","explore/fightend_win.bmp", delaytime=0.01, sim=0.6, tryTimes=200)
             scene_chang_handle("explore/fightend_win_giftopen.bmp", "explore/fightend_win_gift1.bmp", delaytime=0.01, sim=0.6,tryTimes=200)
-            scene_chang_handle("explore/exploreEnterflag.bmp","explore/fightend_win_giftopen.bmp", delaytime=0.1, sim=0.8, tryTimes=200)
+            scene_chang_handle("explore/exploreEnterflag.bmp","explore/fightend_win_giftopen.bmp", delaytime=0.1, tryTimes=200)
             break
         ret = find_pic_loop("explore/fightend_fail.bmp", sim=0.8, click_en=1, times=1, wait_delta=0.1)
         if ret !="":
@@ -103,9 +103,43 @@ def change_dog_food():
 
     #进行换狗粮成功判断
 
+"""
+自动探索函数
+Parameters:
+    chapter - 章节数
+    difficulty_mode - 难易程度 0 普通 ；1 困难
+Returns:
+  成功：1
+  失败：0
+Raises:
+"""
+def autoexplore(chapter,difficulty_mode = 0):
+    enter_explore(chapter = 17,difficulty_mode=difficulty_mode)
+    while (True):
+        ret = find_pic_loop("explore/monster-0.bmp", click_en=0, sim=0.8, times=10, wait_delta=0.1)
+        print("")
+        if ret != "":
+            find_monster(0)
+            break
+        ret = find_pic_loop("explore/monster-1.bmp", click_en=0, sim=0.8, times=10, wait_delta=0.1)
+        if ret != "":
+            find_monster(1)
+        else:
+            moveto(970, 542)
+            left_click()
 
+    scene_chang_handle("explore/exploreoutconfirm.bmp", "explore/exploreout.bmp", tryTimes=30)
+    scene_chang_handle("explore/exploreflag.bmp", "explore/exploreoutconfirm.bmp",tryTimes=30)
+    ret = find_pic_loop("explore/baoxiang.bmp", click_en=0, sim=0.8, times=20, wait_delta=0.1)
+    if ret != "":
+        scene_chang_handle("explore/fightend_win_gift1.bmp", "explore/baoxiang.bmp", delaytime=0.01, sim=0.6,
+                           tryTimes=200)
+        scene_chang_handle("explore/fightend_win_giftopen.bmp", "explore/fightend_win_gift1.bmp", delaytime=0.01,
+                           sim=0.6, tryTimes=200)
+        scene_chang_handle("explore/exploreEnterflag.bmp", "explore/fightend_win_giftopen.bmp", delaytime=0.1,
+                           tryTimes=200)
 
-
+    return 1
 
 
 

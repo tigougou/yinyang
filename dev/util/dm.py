@@ -18,7 +18,6 @@ Raises:
 def WindowBind(type):
     if(type == 1):
         hwnd = dm.FindWindow('BS2CHINAUI','Bluestacks App Player')
-        hwnd = dm.EnumWindow(hwnd, "", "", 0)
         print("find bluestack! hwnd: " + str(hwnd))
         hwnd = dm.EnumWindow(hwnd, "", "", 0)
         hwnds = hwnd.split(',')
