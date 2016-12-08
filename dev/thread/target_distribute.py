@@ -14,4 +14,5 @@ class exploreThread(threading.Thread):
 if __name__ == '__main__':
     hour = int(time.strftime('%H',time.localtime(time.time())))
     minite = int(time.strftime('%M', time.localtime(time.time())))
-    if()
+    if(hour == 13 and minite>10):
+        yaoguaituizhi_en = 1
