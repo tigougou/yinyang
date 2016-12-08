@@ -77,9 +77,9 @@ def find_monster(monster_type):
         ret = find_pic_loop("explore/fightend_win.bmp", sim=0.8,click_en = 1, times=1, wait_delta=0.1)
         if ret !="":
             win_flag = 1
-            scene_chang_handle("explore/fightend_win_gift1.bmp","explore/fightend_win.bmp", delaytime=0.01, sim=0.6, tryTimes=200)
-            scene_chang_handle("explore/fightend_win_giftopen.bmp", "explore/fightend_win_gift1.bmp", delaytime=0.01, sim=0.6,tryTimes=200)
-            scene_chang_handle("explore/exploreEnterflag.bmp","explore/fightend_win_giftopen.bmp", delaytime=0.1, tryTimes=200)
+            scene_chang_handle("explore/fightend_win_gift1.bmp","explore/fightend_win.bmp", delaytime=0.01, sim=0.6, tryTimes=2000)
+            scene_chang_handle("explore/fightend_win_giftopen.bmp", "explore/fightend_win_gift1.bmp", delaytime=0.01, sim=0.6,tryTimes=2000)
+            scene_chang_handle("explore/exploreEnterflag.bmp","explore/fightend_win_giftopen.bmp", delaytime=0.1, tryTimes=2000)
             break
         ret = find_pic_loop("explore/fightend_fail.bmp", sim=0.8, click_en=1, times=1, wait_delta=0.1)
         if ret !="":
@@ -125,7 +125,7 @@ def autoexplore(chapter,difficulty_mode = 0):
         if ret != "":
             find_monster(1)
         else:
-            moveto(970, 542)
+            moveto(970, 592)
             left_click()
 
     scene_chang_handle("explore/exploreoutconfirm.bmp", "explore/exploreout.bmp", tryTimes=30)
@@ -135,9 +135,9 @@ def autoexplore(chapter,difficulty_mode = 0):
         scene_chang_handle("explore/fightend_win_gift1.bmp", "explore/baoxiang.bmp", delaytime=0.01, sim=0.6,
                            tryTimes=200)
         scene_chang_handle("explore/fightend_win_giftopen.bmp", "explore/fightend_win_gift1.bmp", delaytime=0.01,
-                           sim=0.6, tryTimes=200)
+                           sim=0.6, tryTimes=2000)
         scene_chang_handle("explore/exploreEnterflag.bmp", "explore/fightend_win_giftopen.bmp", delaytime=0.1,
-                           tryTimes=200)
+                           tryTimes=2000)
 
     return 1
 
