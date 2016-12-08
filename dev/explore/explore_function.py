@@ -34,7 +34,7 @@ Returns:
   失败：0
 Raises:
 """
-def enter_explore(chapter = 16 , difficulty_mode = 0):
+def enter_explore(chapter = 17 , difficulty_mode = 0):
     """ 本函数调用前需要人物在探索场景下 """
     # 根据章节号找到对应的章节并点击
     chapter_choose(chapter)
@@ -59,13 +59,15 @@ def find_monster(monster_type):
     """ 本函数调用前需要人物在章节探索环境下 """
     # 根据怪物类型设定查找集合# 进行查找并点击攻击（需要合适的算法进行找怪）
     if monster_type == 0:
-        scene_chang_handle("explore/fight_enterflag.bmp", "explore/monster-0.bmp", delaytime=0.1, sim=0.7, tryTimes=200)
+        ret = scene_chang_handle("explore/fight_enterflag.bmp", "explore/monster-0.bmp", delaytime=0.1, sim=0.7, tryTimes=40)
     elif monster_type == 1:
-        scene_chang_handle("explore/fight_enterflag.bmp", "explore/monster-1.bmp", delaytime=0.1, sim=0.8, tryTimes=200)
+        ret = scene_chang_handle("explore/fight_enterflag.bmp", "explore/monster-1.bmp", delaytime=0.1, sim=0.7, tryTimes=40)
     #elif monster_type == 2:
         """"""
     #else :
     #准备
+    if ret == 0:
+        return 0
     scene_chang_handle("explore/fightreadyflag.bmp", "explore/fightready.bmp", delaytime=0.1, sim=0.8, tryTimes=200)
     #攻击优先级
     moveto(970, 270)
@@ -83,7 +85,7 @@ def find_monster(monster_type):
         if ret !="":
             win_flag = 0
             break
-
+    return 1
 
 """
 更换狗粮功能函数

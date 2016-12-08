@@ -25,7 +25,7 @@ Returns:
   失败：0
 Raises:
 """
-def scene_chang_handle(state_next,pic_click,delaytime = 2,sim = 0.8,tryTimes = 20):
+def scene_chang_handle(state_next,pic_click,delaytime = 1,sim = 0.8,tryTimes = 30):
     for  i in range(tryTimes):
         ret = find_pic_loop(pic_click,sim = sim,times = 1)
         print(ret)
