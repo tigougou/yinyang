@@ -116,7 +116,7 @@ Raises:
 def autoexplore(chapter,difficulty_mode = 0):
     enter_explore(chapter = 17,difficulty_mode=difficulty_mode)
     while (True):
-        ret = find_pic_loop("explore/monster-0.bmp", click_en=0, sim=0.8, times=10, wait_delta=0.1)
+        ret = find_pic_loop("explore/monster-0.bmp", click_en=0, sim=0.8, times=20, wait_delta=0.1)
         print("")
         if ret != "":
             find_monster(0)
