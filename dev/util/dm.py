@@ -5,6 +5,8 @@ dm = win32com.client.Dispatch('dm.dmsoft')
 print(dm.Ver())
 regInfoList = regInfoFile.read().split('\n')
 dm.SetPath("D:\dm110")
+dm.SetDict(0,"process\dm_soft.txt")
+dm.UseDict(0)
 dm_ret = dm.Reg(regInfoList[0],regInfoList[1])
 """
 绑定模拟器函数
@@ -169,6 +171,8 @@ def key_press_str(str,delay):
     return dm.KeyPressStr(str,delay)
 def send_string(hwnd, str):
     return dm.SendString(hwnd, str)
+def get_str(x1, y1, x2, y2, color = "000000-000000", sim = 0.9):
+    return dm.Ocr(x1, y1, x2, y2, color, sim)
 
 
 
