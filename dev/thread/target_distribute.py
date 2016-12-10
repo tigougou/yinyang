@@ -34,6 +34,7 @@ class exploreThread(multiprocessing.Process):
         #首先判定锁是否被占用，若占用则堵塞，等待锁的释放
         global chapter_num
         while(True):
+            bind(2)
             print("waiting explore start...")
             if explore_mutex.acquire():
                 cur_power = get_cur_power()
@@ -45,7 +46,7 @@ class exploreThread(multiprocessing.Process):
                 #到探索场景
                 print("change_scene('explore') need to be called")
                 #调用探索函数，进入一次，结束后应该在探索场景中
-                bind(2)
+
                 autoexplore(chapter=chapter_num, difficulty_mode=1)
                 explore_mutex.release()
 class breakThread(multiprocessing.Process):
