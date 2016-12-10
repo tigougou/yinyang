@@ -2,9 +2,10 @@ import threading,time
 from explore.explore_function import *
 from explore.glb import *
 from util.dm import *
+import multiprocessing
+import os
+import psutil
 from explore.log import *
-explore_mutex =  threading.Lock()
-chapter_num = 17
 def get_cur_power():
     # 获取当前体力
     str = get_str(764,17,808,41,color="b@2a1909-101010",sim=0.9)
@@ -21,7 +22,14 @@ def get_cur_break_ticket():
         return ticket
     else:
         return None
-class exploreThread(threading.Thread):
+class friendTarget(multiprocessing.Process):
+    def run(self):
+        #所有申请都点击取消
+        print("start friendTarget process")
+class exploreThread(multiprocessing.Process):
+    def __init__(self):
+        multiprocessing.Process.__init__(self)
+        pid = os.getpid()
     def run(self):
         #首先判定锁是否被占用，若占用则堵塞，等待锁的释放
         global chapter_num
@@ -31,9 +39,13 @@ class exploreThread(threading.Thread):
             #到探索场景
             print("change_scene('explore') need to be called")
             #调用探索函数，进入一次，结束后应该在探索场景中
+            bind(2)
             autoexplore(chapter=chapter_num, difficulty_mode=1)
             explore_mutex.release()
-class breakThread(threading.Thread):
+class breakThread(multiprocessing.Process):
+    def __init__(self):
+        multiprocessing.Process.__init__(self)
+        pid = os.getpid()
     def run(self):
         #首先判定锁是否被占用，若占用则堵塞，等待锁的释放
         global chapter_num
@@ -45,16 +57,86 @@ class breakThread(threading.Thread):
             #调用探索函数，进入一次，结束后应该在探索场景中
             autoexplore(chapter=chapter_num, difficulty_mode=1)
             explore_mutex.release()
-if __name__ == '__main__':
 
-    explore_thread = exploreThread()
-    break_thread = breakThread()
-    yaoguaituizhi_first = 0
-    yaoguaituizhi_baoxiang_first = 0
-    yaoguaituizhi_en = 0
-    yaoguaituizhi_baoxiang_en = 0
-    bind(2)
-    while(True):
+
+
+explore_mutex =  threading.Lock()
+chapter_num = 17
+
+
+
+
+#-----------------gui------------------------------
+import sys
+from PyQt5.QtWidgets import (QWidget, QToolTip,
+                             QPushButton, QApplication)
+from PyQt5.QtGui import QFont
+
+
+class Example(QWidget):
+
+    def __init__(self):
+        super().__init__()
+        self.explore_thread = exploreThread()
+        self.break_thread = breakThread()
+        self.initUI()
+
+
+    def initUI(self):
+
+        QToolTip.setFont(QFont('SansSerif', 10))
+
+        self.setToolTip('This is a <b>QWidget</b> widget')
+
+        btn = QPushButton('start', self)
+        btn.setToolTip('开启主线程')
+        btn.resize(btn.sizeHint())
+        btn.clicked.connect(self.start_process)
+        btn.move(50, 50)
+
+        pause_btn = QPushButton('pause', self)
+        pause_btn.setToolTip('暂停全部线程')
+        pause_btn.resize(btn.sizeHint())
+        pause_btn.clicked.connect(self.pause_process)
+        pause_btn.move(150, 50)
+
+
+
+        self.setGeometry(300, 300, 300, 200)
+        self.setWindowTitle('Tooltips')
+        self.show()
+    def start_process(self):
+        sender = self.sender()
+        if(sender.text() == 'start'):
+            self.explore_thread = exploreThread()
+            self.break_thread = breakThread()
+            self.main_process(self.explore_thread, self.break_thread)
+            sender.setText('stop')
+        elif(sender.text() == 'stop'):
+            self.explore_thread.stop()
+            sender.setText('start')
+
+    def pause_process(self):
+        sender = self.sender()
+        print('sender is ' + sender.text())
+        if(sender.text() == 'pause'):
+            print('进程暂停  进程编号 %s ' %(self.explore_thread.pid))
+            p = psutil.Process(self.explore_thread.pid)
+            p.suspend()
+            sender.setText('continue')
+        elif(sender.text() == 'continue'):
+            print('进程继续  进程编号 %s ' %(self.explore_thread.pid))
+            p = psutil.Process(self.explore_thread.pid)
+            p.resume()
+            sender.setText('pause')
+    def main_process(self,explore_thread,break_thread):
+        yaoguaituizhi_first = 0
+        yaoguaituizhi_baoxiang_first = 0
+        yaoguaituizhi_en = 0
+        yaoguaituizhi_baoxiang_en = 0
+
+
+        bind(2)
         hour = int(time.strftime('%H',time.localtime(time.time())))
         minute = int(time.strftime('%M', time.localtime(time.time())))
         print("current time is " + str(hour) +":"+ str(minute))
@@ -90,7 +172,27 @@ if __name__ == '__main__':
         if cur_power >= 20:
             #此处开始探索线程
             explore_thread.start()
-            explore_thread.join()
+
+
+
+
+
+
+
+
+
+
+
+
+
+if __name__ == '__main__':
+
+    app = QApplication(sys.argv)
+    ex = Example()
+    sys.exit(app.exec_())
+    # explore_thread = exploreThread()
+    # explore_thread.start()
+
 
 
 
