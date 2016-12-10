@@ -33,9 +33,14 @@ class exploreThread(multiprocessing.Process):
     def run(self):
         #首先判定锁是否被占用，若占用则堵塞，等待锁的释放
         global chapter_num
-        print("waiting explore start...")
-        while(1):
+        while(True):
+            print("waiting explore start...")
             if explore_mutex.acquire():
+                cur_power = get_cur_power()
+                if cur_power <= 20:
+                    #此处开始探索线程
+                    explore_mutex.release()
+                    continue
                 print("start exploring")
                 #到探索场景
                 print("change_scene('explore') need to be called")
@@ -49,14 +54,8 @@ class breakThread(multiprocessing.Process):
         pid = os.getpid()
     def run(self):
         #首先判定锁是否被占用，若占用则堵塞，等待锁的释放
-        global chapter_num
         print("waiting breakTread start...")
         if explore_mutex.acquire():
-            print("start exploring")
-            #到探索场景
-            print("change_scene('explore') need to be called")
-            #调用探索函数，进入一次，结束后应该在探索场景中
-            autoexplore(chapter=chapter_num, difficulty_mode=1)
             explore_mutex.release()
 
 
@@ -114,7 +113,8 @@ class Example(QWidget):
             self.main_process(self.explore_thread, self.break_thread)
             sender.setText('stop')
         elif(sender.text() == 'stop'):
-            self.explore_thread.terminate()
+            if(self.explore_thread.is_alive()):
+                self.explore_thread.terminate()
             unbind_window()
             sender.setText('start')
 
@@ -122,16 +122,18 @@ class Example(QWidget):
         sender = self.sender()
         print('sender is ' + sender.text())
         if(sender.text() == 'pause'):
-            print('进程暂停  进程编号 %s ' %(self.explore_thread.pid))
-            p = psutil.Process(self.explore_thread.pid)
-            p.suspend()
-            unbind_window()
+            if(self.explore_thread.is_alive()):
+                print('进程暂停  进程编号 %s ' %(self.explore_thread.pid))
+                p = psutil.Process(self.explore_thread.pid)
+                p.suspend()
+                unbind_window()
             sender.setText('continue')
         elif(sender.text() == 'continue'):
-            print('进程继续  进程编号 %s ' %(self.explore_thread.pid))
-            p = psutil.Process(self.explore_thread.pid)
-            p.resume()
-            bind(2)
+            if(self.explore_thread.is_alive()):
+                print('进程继续  进程编号 %s ' %(self.explore_thread.pid))
+                p = psutil.Process(self.explore_thread.pid)
+                p.resume()
+                bind(2)
             sender.setText('pause')
     def main_process(self,explore_thread,break_thread):
         yaoguaituizhi_first = 0
