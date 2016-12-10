@@ -123,11 +123,13 @@ class Example(QWidget):
             print('进程暂停  进程编号 %s ' %(self.explore_thread.pid))
             p = psutil.Process(self.explore_thread.pid)
             p.suspend()
+            unbind_window()
             sender.setText('continue')
         elif(sender.text() == 'continue'):
             print('进程继续  进程编号 %s ' %(self.explore_thread.pid))
             p = psutil.Process(self.explore_thread.pid)
             p.resume()
+            bind(2)
             sender.setText('pause')
     def main_process(self,explore_thread,break_thread):
         yaoguaituizhi_first = 0

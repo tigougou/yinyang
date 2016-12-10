@@ -173,7 +173,8 @@ def send_string(hwnd, str):
     return dm.SendString(hwnd, str)
 def get_str(x1, y1, x2, y2, color = "000000-000000", sim = 0.9):
     return dm.Ocr(x1, y1, x2, y2, color, sim)
-
+def unbind_window():
+    return dm.UnBindWindow()
 
 
 
