@@ -65,3 +65,23 @@ Raises:
 def round_start_handle(mode, prepare_flag):
     """ 本函数调用必须在回合开始环境下 """
     # 根据模式进行判定对应动作
+
+"""
+点击直到图片出现函数
+Parameters:
+  pic  - 等待的图片
+  try_times - 尝试次数
+  time_delta - 尝试间隔时间，s为单位
+  sim - 相似度
+Returns:
+  成功：1
+  失败：0
+Raises:
+"""
+def click_until_pic(pic,try_times = 2000, time_delta = 1,sim = 0.8):
+    for i in range(try_times):
+        if(find_pic(pic, sim=sim) != ""):
+            return 1
+        left_click()
+        time.sleep(time_delta)
+    return 0

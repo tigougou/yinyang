@@ -114,9 +114,8 @@ class Example(QWidget):
             self.main_process(self.explore_thread, self.break_thread)
             sender.setText('stop')
         elif(sender.text() == 'stop'):
-            print('0')
             self.explore_thread.terminate()
-            print('1')
+            unbind_window()
             sender.setText('start')
 
     def pause_process(self):
