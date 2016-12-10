@@ -34,14 +34,15 @@ class exploreThread(multiprocessing.Process):
         #首先判定锁是否被占用，若占用则堵塞，等待锁的释放
         global chapter_num
         print("waiting explore start...")
-        if explore_mutex.acquire():
-            print("start exploring")
-            #到探索场景
-            print("change_scene('explore') need to be called")
-            #调用探索函数，进入一次，结束后应该在探索场景中
-            bind(2)
-            autoexplore(chapter=chapter_num, difficulty_mode=1)
-            explore_mutex.release()
+        while(1):
+            if explore_mutex.acquire():
+                print("start exploring")
+                #到探索场景
+                print("change_scene('explore') need to be called")
+                #调用探索函数，进入一次，结束后应该在探索场景中
+                bind(2)
+                autoexplore(chapter=chapter_num, difficulty_mode=1)
+                explore_mutex.release()
 class breakThread(multiprocessing.Process):
     def __init__(self):
         multiprocessing.Process.__init__(self)
@@ -113,7 +114,9 @@ class Example(QWidget):
             self.main_process(self.explore_thread, self.break_thread)
             sender.setText('stop')
         elif(sender.text() == 'stop'):
-            self.explore_thread.stop()
+            print('0')
+            self.explore_thread.terminate()
+            print('1')
             sender.setText('start')
 
     def pause_process(self):
