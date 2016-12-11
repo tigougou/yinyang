@@ -200,6 +200,7 @@ class mainThread(QThread):
                     change_scene('yard')
                     activity_power_get()
                     power_get_first = 0
+                    change_scene('explore')
                 # if(hour == 23 and minute > 3 and power_get_second == 1):
                 #     change_scene('yard')
                 #     activity_power_get()
@@ -306,6 +307,15 @@ class Example(QWidget):
         self.setGeometry(300, 300, 300, 200)
         self.setWindowTitle('tigougou')
         self.show()
+    def closeEvent(self, event):
+        if(self.main_thread.isRunning()):
+            print('kill main')
+            try:
+                self.main_thread.terminate()
+            except Exception:
+                explore_mutex.release()
+                print('get main quit except')
+            event.accept()
     #开启线程处理程序
     def start_process(self):
         global explore_mutex
