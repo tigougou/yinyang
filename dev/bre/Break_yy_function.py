@@ -80,6 +80,10 @@ def break_yy_fightchoose( medal = 0,level = 0):
         ret = find_pic_loop("break/p_chooseflag.bmp", times=300, sim = 0.7,wait_delta=0.1,click_en = 0)
         if ret != "":break
         #未找到 翻页
+        ret = find_pic_loop("break/medal0.bmp|break/medal1.bmp|break/medal2.bmp|break/medal3.bmp|break/medal4.bmp|break/medal5.bmp", times=30, wait_delta=0.1,sim = 0.6)
+        if ret =="":
+            moveto(575, 239)
+            whelldown()
    #判断等级（根据奖牌数量的坐标寻找）
 
     ret = find_pic_loop("break/fight.bmp|break/fight1.bmp|break/fight2.bmp",  click_en=0, sim=0.7, times=10, wait_delta=0.1)
