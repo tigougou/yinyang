@@ -169,6 +169,10 @@ def left_down():
     return dm.LeftDown()
 def left_up():
     return dm.LeftUp()
+def whelldown():
+    return dm.WheelDown()
+def whellup():
+    return dm.Wheelup()
 def key_press_str(str,delay):
     return dm.KeyPressStr(str,delay)
 def send_string(hwnd, str):
