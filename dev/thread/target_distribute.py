@@ -66,9 +66,16 @@ def get_cur_break_ticket():
 var:
 """
 class friendTarget(multiprocessing.Process):
+    def __init__(self):
+        multiprocessing.Process.__init__(self)
+        pid = os.getpid()
     def run(self):
         #所有申请都点击取消
+        bind(2)
         print("start friendTarget process")
+        while(1):
+            find_pic_loop('process/denial.bmp',offsetx=261,offsety=367,wait_delta=3)
+
 
 
 """
@@ -144,8 +151,6 @@ class breakThread(multiprocessing.Process):
     def run(self):
         #首先判定锁是否被占用，若占用则堵塞，等待锁的释放
         print("waiting breakTread start...")
-        if explore_mutex.acquire():
-            explore_mutex.release()
 """
 任务分发主线程
 
@@ -160,6 +165,7 @@ class mainThread(QThread):
         super().__init__()
         self.explore_thread = None
         self.yy_break_thread = None
+        self.friend_target_thread = friendTarget()
         #self.break_thread = None
     def run(self):
         global cur_power
@@ -173,7 +179,9 @@ class mainThread(QThread):
         last_yy_break_time = datetime.datetime.now() - datetime.timedelta(seconds= 800)
         self.main_thread_window_bind()
         print('main thread pid: ' + str(os.getpid()))
+        self.friend_target_thread.start()
         # 本线程应该无限循环进行各个任务的分发
+
         while(1):
             print('进入循环')
 
@@ -243,6 +251,10 @@ class mainThread(QThread):
             if(self.yy_break_thread.is_alive()):
                 print('killing yybreak')
                 self.yy_break_thread.terminate()
+        if(self.friend_target_thread != None):
+            if(self.friend_target_thread.is_alive()):
+                print('killing friend_target_thread')
+                self.friend_target_thread.terminate()
         print('super terminate')
         super().terminate()
 
@@ -331,6 +343,10 @@ class Example(QWidget):
                 if(self.main_thread.yy_break_thread.is_alive()):
                     p = psutil.Process(self.main_thread.yy_break_thread.pid)
                     p.suspend()
+            if(self.main_thread.friend_target_thread != None):
+                if(self.main_thread.friend_target_thread.is_alive()):
+                    p = psutil.Process(self.main_thread.friend_target_thread.pid)
+                    p.suspend()
             self.main_thread.main_thread_window_unbind()
             sender.setText('continue')
         elif(sender.text() == 'continue'):
@@ -342,6 +358,10 @@ class Example(QWidget):
             if(self.main_thread.yy_break_thread != None):
                 if(self.main_thread.yy_break_thread.is_alive()):
                     p = psutil.Process(self.main_thread.yy_break_thread.pid)
+                    p.resume()
+            if(self.main_thread.friend_target_thread != None):
+                if(self.main_thread.friend_target_thread.is_alive()):
+                    p = psutil.Process(self.main_thread.friend_target_thread.pid)
                     p.resume()
             self.main_thread.main_thread_window_bind()
             sender.setText('pause')
