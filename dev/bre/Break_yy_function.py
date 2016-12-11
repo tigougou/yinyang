@@ -63,22 +63,25 @@ def break_yy_fightchoose( medal = 0,level = 0):
     #判断奖牌数量
     while (1):
         if medal ==0:
-            find_pic_loop("break/medal0.bmp",times=30, wait_delta=0.1)
+            ret =find_pic_loop("break/medal0.bmp",times=30, wait_delta=0.1)
         elif medal == 1:
-            find_pic_loop("break/medal0.bmp", times=30, wait_delta=0.1)
+            ret =find_pic_loop("break/medal1.bmp", times=30, wait_delta=0.1)
         elif medal == 2:
-            find_pic_loop("break/medal0.bmp", times=30, wait_delta=0.1)
+            ret =find_pic_loop("break/medal2.bmp", times=30, wait_delta=0.1)
         elif medal == 3:
-            find_pic_loop("break/medal0.bmp", times=30, wait_delta=0.1)
+            ret =find_pic_loop("break/medal3.bmp", times=30, wait_delta=0.1)
         elif medal == 4:
-            find_pic_loop("break/medal0.bmp", times=30, wait_delta=0.1)
+            ret =find_pic_loop("break/medal4.bmp", times=30, wait_delta=0.1)
         elif medal == 5:
-            find_pic_loop("break/medal0.bmp", times=30, wait_delta=0.1)
+            ret =find_pic_loop("break/medal5.bmp", times=30, wait_delta=0.1, sim=0.6)
+        else:
+            return 0
+        if ret == "":return 0
         ret = find_pic_loop("break/p_chooseflag.bmp", times=300, sim = 0.7,wait_delta=0.1,click_en = 0)
         if ret != "":break
    #判断等级（根据奖牌数量的坐标寻找）
 
-    ret = find_pic_loop("break/fight.bmp|break/fight1.bmp|break/fight2.bmp",  click_en=0, sim=0.8, times=10, wait_delta=0.1)
+    ret = find_pic_loop("break/fight.bmp|break/fight1.bmp|break/fight2.bmp",  click_en=0, sim=0.7, times=10, wait_delta=0.1)
     if ret == "":
         moveto(1,1)
         left_click()
@@ -97,7 +100,7 @@ def break_yy_fight():
     """本函数在阴阳寮攻击对象已选择界面下使用"""
 
     #点击攻击按钮
-    scene_chang_handle("explore/fightready.bmp","break/fight.bmp",delaytime=1, sim=0.7, tryTimes=30)
+    scene_chang_handle("explore/fightready.bmp","break/fight.bmp",delaytime=1, sim=0.6, tryTimes=30)
     #等待准备
     scene_chang_handle("break/fightreadyflag.bmp", "explore/fightready.bmp", delaytime=0.1, sim=0.7, tryTimes=200)
     moveto(970, 270)
@@ -144,8 +147,10 @@ def autobreak_yy( ):
     break_yy_enter()
     for i in {1, 2, 3}:
         break_yy_choose(number=i)
-        ret = break_yy_fightchoose(medal=0)
-        if ret != 2:
+        ret = break_yy_fightchoose(medal=5)
+        if ret == 0:
+            print("nothing to do")
+        elif ret != 2:
             break_yy_fight()
     break_yy_out()
     """本函数在阴阳寮攻击对象已选择界面下使用"""
