@@ -90,18 +90,18 @@ class exploreThread(multiprocessing.Process):
         global explore_mutex
         print("cur_power = " + str(cur_power))
         print('explore pid: ' + str(os.getpid()))
-
-        bind(2)
-        print("waiting explore start...")
-        if explore_mutex.acquire():
-            print("start exploring")
-            #到探索场景
-            print("change_scene('explore') need to be called")
-            #调用探索函数，进入一次，结束后应该在探索场景中
-            autoexplore(chapter=chapter_num, difficulty_mode=1)
-            cur_power = get_cur_power()
-            unbind_window()
-            explore_mutex.release()
+        while(True):
+            bind(2)
+            print("waiting explore start...")
+            if explore_mutex.acquire():
+                print("start exploring")
+                #到探索场景
+                print("change_scene('explore') need to be called")
+                #调用探索函数，进入一次，结束后应该在探索场景中
+                autoexplore(chapter=chapter_num, difficulty_mode=1)
+                cur_power = get_cur_power()
+                unbind_window()
+                explore_mutex.release()
     def terminate(self):
         print('enter explore terminate')
         # ret = unbind_window()
@@ -166,7 +166,6 @@ class mainThread(QThread):
                     self.explore_thread.start()
                     print('开启探索线程')
                     self.explore_thread.join()
-                    explore_mutex.release()
                 #explore_mutex.release()
                     #self.explore_thread.join()
             else:print("can't get lock")
@@ -224,7 +223,6 @@ class Example(QWidget):
         self.pause_btn.setToolTip('暂停全部线程')
         self.pause_btn.resize(self.pause_btn.sizeHint())
         self.pause_btn.clicked.connect(self.pause_process)
-        self.pause_btn.setEnabled(False)
         self.pause_btn.move(150, 50)
 
         self.setGeometry(300, 300, 300, 200)
@@ -243,7 +241,6 @@ class Example(QWidget):
             self.main_thread = mainThread()
             self.main_thread.start()
             sender.setText('stop')
-            self.pause_btn.setEnabled(True)
         elif(sender.text() == 'stop'):
             #unbind_window()
             #print('unbind_success!')
@@ -254,22 +251,18 @@ class Example(QWidget):
                 except Exception:
                     explore_mutex.release()
                     print('get main quit except')
-            self.pause_btn.setEnabled(False)
-            self.pause_btn.setText('pause')
             sender.setText('start')
-
 
     #暂停线程处理程序
     def pause_process(self):
         sender = self.sender()
         print('sender is ' + sender.text())
         if(sender.text() == 'pause'):
-            if(self.main_thread.explore_thread != None):
-                if(self.main_thread.explore_thread.is_alive()):
-                    print('进程暂停  进程编号 %s ' %(self.main_thread.explore_thread.pid))
-                    p = psutil.Process(self.main_thread.explore_thread.pid)
-                    p.suspend()
-                    self.main_thread.main_thread_window_unbind()
+            if(self.main_thread.explore_thread.is_alive()):
+                print('进程暂停  进程编号 %s ' %(self.main_thread.explore_thread.pid))
+                p = psutil.Process(self.main_thread.explore_thread.pid)
+                p.suspend()
+                self.main_thread.main_thread_window_unbind()
             sender.setText('continue')
         elif(sender.text() == 'continue'):
             if(self.main_thread.explore_thread.is_alive()):
