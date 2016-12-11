@@ -2,6 +2,7 @@ import threading,time
 from explore.explore_function import *
 from explore.glb import *
 from util.dm import *
+from bre.Break_yy_function import *
 import multiprocessing
 from multiprocessing import Manager,Value
 from activity.activity_function import  *
@@ -110,8 +111,24 @@ class exploreThread(multiprocessing.Process):
         #     print('unbind success')
         print('explore super terminate')
         super().terminate()
+"""
+阴阳寮突破进程
 
-
+首先绑定窗口
+突破流程：
+var:
+"""
+class yyBreakThread(multiprocessing.Process):
+    def __init__(self):
+        multiprocessing.Process.__init__(self)
+        pid = os.getpid()
+        #self.daemon = True
+    def run(self):
+        #首先判定锁是否被占用，若占用则堵塞，等待锁的释放
+        print("yy breakTread start...")
+        bind(2)
+        autobreak_yy()
+        unbind_window()
 """
 突破线程
 
@@ -142,6 +159,7 @@ class mainThread(QThread):
     def __init__(self):
         super().__init__()
         self.explore_thread = None
+        self.yy_break_thread = None
         #self.break_thread = None
     def run(self):
         global cur_power
@@ -152,7 +170,7 @@ class mainThread(QThread):
         yaoguaituizhi_gift_second = 1
         power_get_first = 1
         power_get_second = 1
-        last_yy_break_time = datetime.datetime.now()
+        last_yy_break_time = datetime.datetime.now() - datetime.timedelta(seconds= 800)
         self.main_thread_window_bind()
         print('main thread pid: ' + str(os.getpid()))
         # 本线程应该无限循环进行各个任务的分发
@@ -173,14 +191,17 @@ class mainThread(QThread):
                     change_scene('yard')
                     activity_power_get()
                     power_get_first = 0
-                if(hour == 23 and minute > 3 and power_get_second == 1):
-                    change_scene('yard')
-                    activity_power_get()
-                    power_get_second = 0
+                # if(hour == 23 and minute > 3 and power_get_second == 1):
+                #     change_scene('yard')
+                #     activity_power_get()
+                #     power_get_second = 0
                 #阴阳寮结界判定
                 #时间间隔700s
                 if((cur_time - last_yy_break_time).seconds > 700):
                     print("start yy break")
+                    self.yy_break_thread = yyBreakThread()
+                    self.yy_break_thread.start()
+                    self.yy_break_thread.join()
                     #等待结束
                     last_yy_break_time = datetime.datetime.now()
                 print('start get power and ticket value')
@@ -218,6 +239,10 @@ class mainThread(QThread):
             if(self.explore_thread.is_alive()):
                 print('killing explore')
                 self.explore_thread.terminate()
+        if(self.yy_break_thread != None):
+            if(self.yy_break_thread.is_alive()):
+                print('killing yybreak')
+                self.yy_break_thread.terminate()
         print('super terminate')
         super().terminate()
 
@@ -297,18 +322,28 @@ class Example(QWidget):
         sender = self.sender()
         print('sender is ' + sender.text())
         if(sender.text() == 'pause'):
-            if(self.main_thread.explore_thread.is_alive()):
-                print('进程暂停  进程编号 %s ' %(self.main_thread.explore_thread.pid))
-                p = psutil.Process(self.main_thread.explore_thread.pid)
-                p.suspend()
-                self.main_thread.main_thread_window_unbind()
+            if(self.main_thread.explore_thread != None):
+                if(self.main_thread.explore_thread.is_alive()):
+                    print('进程暂停  进程编号 %s ' %(self.main_thread.explore_thread.pid))
+                    p = psutil.Process(self.main_thread.explore_thread.pid)
+                    p.suspend()
+            if(self.main_thread.yy_break_thread != None):
+                if(self.main_thread.yy_break_thread.is_alive()):
+                    p = psutil.Process(self.main_thread.yy_break_thread.pid)
+                    p.suspend()
+            self.main_thread.main_thread_window_unbind()
             sender.setText('continue')
         elif(sender.text() == 'continue'):
-            if(self.main_thread.explore_thread.is_alive()):
-                print('进程继续  进程编号 %s ' %(self.main_thread.explore_thread.pid))
-                p = psutil.Process(self.main_thread.explore_thread.pid)
-                p.resume()
-                self.main_thread.main_thread_window_bind()
+            if(self.main_thread.explore_thread != None):
+                if(self.main_thread.explore_thread.is_alive()):
+                    print('进程继续  进程编号 %s ' %(self.main_thread.explore_thread.pid))
+                    p = psutil.Process(self.main_thread.explore_thread.pid)
+                    p.resume()
+            if(self.main_thread.yy_break_thread != None):
+                if(self.main_thread.yy_break_thread.is_alive()):
+                    p = psutil.Process(self.main_thread.yy_break_thread.pid)
+                    p.resume()
+            self.main_thread.main_thread_window_bind()
             sender.setText('pause')
 
 
