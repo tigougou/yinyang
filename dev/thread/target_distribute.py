@@ -152,7 +152,7 @@ class mainThread(QThread):
         while(1):
             # change_scene('explore')
             print('进入循环')
-            if(explore_mutex.acquire(5)):
+            if(explore_mutex.acquire(timeout=3)):
                 print('start get power value')
                 cur_power = get_cur_power()
                 print('cur_power: ' + str(cur_power))
@@ -164,9 +164,11 @@ class mainThread(QThread):
                     print(self.explore_thread)
                     self.explore_thread.daemon = False
                     self.explore_thread.start()
+                    print('开启探索线程')
+                    self.explore_thread.join()
+                #explore_mutex.release()
                     #self.explore_thread.join()
-                    #self.explore_thread.join()
-            print("can't get lock")
+            else:print("can't get lock")
     def terminate(self):
         global explore_mutex
         print('enter main_process terminate')
