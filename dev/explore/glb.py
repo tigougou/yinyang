@@ -78,8 +78,8 @@ def change_scene(next_scene):
             return 0
         #向顶层走
         else:
-            higher_scene = cur_scene.higherSceneDict.keys[0]
-            cur_scene.higherSceneDict[higher_scene](cur_scene)
+            for higher_scene in cur_scene.higherSceneDict.keys():
+                cur_scene.higherSceneDict[higher_scene](cur_scene)
 
 
 
