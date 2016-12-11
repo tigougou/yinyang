@@ -152,7 +152,7 @@ def autobreak_yy( ):
     break_yy_enter()
     for i in {1, 2, 3}:
         break_yy_choose(number=i)
-        ret = break_yy_fightchoose(medal=5)
+        ret = break_yy_fightchoose(medal=0)
         if ret == 0:
             print("nothing to do")
         elif ret != 2:
