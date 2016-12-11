@@ -32,7 +32,7 @@ def scene_chang_handle(state_next,pic_click,delaytime = 1,sim = 0.8,tryTimes = 3
         ret = find_pic_loop(pic_click,sim = sim,times = 1)
         print(ret)
         time.sleep(delaytime)
-        ret = find_pic(state_next)
+        ret = find_pic(state_next,sim = sim)
         if ret != "":
             print("pic_click success")
             return 1

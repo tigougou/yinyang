@@ -13,10 +13,18 @@ class Scene:
         self.lowerSceneDict = lowerSceneDict
         self.name = name
     def fromYardToExplore(self):
+        global cur_scene
         ret = find_pic_loop("glb/main2explore.bmp|glb/main2explore2.bmp|glb/main2explore3.bmp", sim= 0.7, times= 200,success_image='explore/exploreflag.bmp')
         if(ret != ""):
             print('enter explore success!')
             cur_scene = scene_dic['explore']
+    def fromExploreToYard(self):
+        global cur_scene
+        ret = find_pic_loop("glb/explore2yard.bmp", times=200, sim=0.7,
+                            success_image='glb/yardflag1.bmp|glb/yardflag2.bmp')
+        if (ret != ""):
+            print('enter yard success!')
+            cur_scene = scene_dic['yard']
 '''
 添加场景流程：
 首先定义一个全局变量：如global yard
@@ -52,10 +60,10 @@ def glb_init():
     global scene_dic
     yard = Scene('yard', "", {"explore": Scene.fromYardToExplore})
     scene_dic[yard.name] = yard
-    explore = Scene('explore',{'yard':""}, {} )
+    explore = Scene('explore',{'yard':Scene.fromExploreToYard}, {} )
     scene_dic[explore.name] = explore
     # 当前场景对象，进入游戏后，默认画面为庭院
-    cur_scene = yard
+    cur_scene = explore
 glb_init()
 
 
@@ -78,8 +86,8 @@ def change_scene(next_scene):
             return 0
         #向顶层走
         else:
-            higher_scene = cur_scene.higherSceneDict.keys[0]
-            cur_scene.higherSceneDict[higher_scene](cur_scene)
+            for higher_scene in cur_scene.higherSceneDict.keys():
+                cur_scene.higherSceneDict[higher_scene](cur_scene)
 
 
 

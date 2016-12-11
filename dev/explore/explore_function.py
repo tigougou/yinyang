@@ -82,7 +82,7 @@ def find_monster(monster_type):
             scene_chang_handle("explore/fightend_win_giftopen.bmp", "explore/fightend_win_gift1.bmp", delaytime=0.01, sim=0.6,tryTimes=2000)
             scene_chang_handle("explore/exploreEnterflag.bmp","explore/fightend_win_giftopen.bmp", delaytime=0.1, tryTimes=2000)
             break
-        ret = find_pic_loop("explore/fightend_fail.bmp", sim=0.8, click_en=1, times=1, wait_delta=0.1)
+        ret = find_pic_loop("explore/fightend_fail.bmp", success_image = "explore/exploreEnterflag.bmp", sim=0.8, click_en=1, times=1, wait_delta=0.1)
         if ret !="":
             win_flag = 0
             break
@@ -133,7 +133,6 @@ def autoexplore(chapter,difficulty_mode = 0):
         else:
             moveto(970, 592)
             left_click()
-
     scene_chang_handle("explore/exploreoutconfirm.bmp", "explore/exploreout.bmp", tryTimes=30)
     scene_chang_handle("explore/exploreflag.bmp", "explore/exploreoutconfirm.bmp",tryTimes=30)
     ret = find_pic_loop("explore/baoxiang.bmp", click_en=0, sim=0.8, times=20, wait_delta=0.1)
@@ -144,7 +143,6 @@ def autoexplore(chapter,difficulty_mode = 0):
                            sim=0.6, tryTimes=2000)
         scene_chang_handle("explore/exploreEnterflag.bmp", "explore/fightend_win_giftopen.bmp", delaytime=0.1,
                            tryTimes=2000)
-
     return 1
 
 

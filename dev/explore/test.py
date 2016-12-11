@@ -1,8 +1,15 @@
 from explore.explore_function import *
 from util.dm import *
 from explore.glb import *
+from bre.Break_yy_function import *
+from thread.target_distribute import *
+
 WindowBind(1)
 
-glb_init()
+#glb_init()
+#print(explore.higherSceneDict)
 #change_scene("explore")
-#autoexplore(chapter=17, difficulty_mode=0)
+#change_scene("yard")
+#break_yy_enter()
+
+autobreak_yy()
