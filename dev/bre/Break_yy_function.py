@@ -41,11 +41,11 @@ Raises:
 def break_yy_choose( number = 1):
     """本函数在阴阳寮选择界面下使用"""
     if number == 1:
-        find_pic_loop("break/enterbreak_flag.bmp", offsetx=-382, offsety=149,times=30, wait_delta=0.1, success_image="break/breakchooseflag1.bmp")
+        find_pic_loop("break/enterbreak_flag.bmp", offsetx=-382, offsety=149,times=30, wait_delta=0.1, success_image="break/breakchooseflag1.bmp|break/breakchooseflag11.bmp")
     elif number == 2:
-        find_pic_loop("break/enterbreak_flag.bmp", offsetx=-382, offsety=220, times=30, wait_delta=0.1,success_image="break/breakchooseflag2.bmp")
+        find_pic_loop("break/enterbreak_flag.bmp", offsetx=-382, offsety=220, times=30, wait_delta=0.1,success_image="break/breakchooseflag2.bmp|break/breakchooseflag22.bmp")
     else:
-        find_pic_loop("break/enterbreak_flag.bmp", offsetx=-382, offsety=400, times=30, wait_delta=0.1,success_image="break/breakchooseflag3.bmp")
+        find_pic_loop("break/enterbreak_flag.bmp", offsetx=-382, offsety=400, times=30, wait_delta=0.1,success_image="break/breakchooseflag3.bmp|break/breakchooseflag33.bmp")
     left_click()
 """
 阴阳寮结界突破 攻击对象选择函数
