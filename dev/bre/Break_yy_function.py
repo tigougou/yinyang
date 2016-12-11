@@ -63,15 +63,15 @@ def break_yy_fightchoose( medal = 0,level = 0):
     #判断奖牌数量
     while (1):
         if medal ==0:
-            ret =find_pic_loop("break/medal0.bmp",times=30, wait_delta=0.1)
+            ret =find_pic_loop("break/medal0.bmp",times=30, wait_delta=0.1, sim=0.6)
         elif medal == 1:
-            ret =find_pic_loop("break/medal1.bmp", times=30, wait_delta=0.1)
+            ret =find_pic_loop("break/medal1.bmp", times=30, wait_delta=0.1, sim=0.6)
         elif medal == 2:
-            ret =find_pic_loop("break/medal2.bmp", times=30, wait_delta=0.1)
+            ret =find_pic_loop("break/medal2.bmp", times=30, wait_delta=0.1, sim=0.6)
         elif medal == 3:
-            ret =find_pic_loop("break/medal3.bmp", times=30, wait_delta=0.1)
+            ret =find_pic_loop("break/medal3.bmp", times=30, wait_delta=0.1, sim=0.6)
         elif medal == 4:
-            ret =find_pic_loop("break/medal4.bmp", times=30, wait_delta=0.1)
+            ret =find_pic_loop("break/medal4.bmp", times=30, wait_delta=0.1, sim=0.8)
         elif medal == 5:
             ret =find_pic_loop("break/medal5.bmp", times=30, wait_delta=0.1, sim=0.6)
         else:
@@ -152,7 +152,7 @@ def autobreak_yy( ):
     break_yy_enter()
     for i in {1, 2, 3}:
         break_yy_choose(number=i)
-        ret = break_yy_fightchoose(medal=5)
+        ret = break_yy_fightchoose(medal=4)
         if ret == 0:
             print("nothing to do")
         elif ret != 2:
