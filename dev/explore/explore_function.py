@@ -126,6 +126,7 @@ def autoexplore(chapter,difficulty_mode = 0):
                 print("find boss")
                 #boss
                 find_monster(0)
+                break
             elif(monster_num == 1):
                 print("")
                 find_monster(1)
