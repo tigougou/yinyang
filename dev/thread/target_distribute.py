@@ -3,9 +3,34 @@ from explore.explore_function import *
 from explore.glb import *
 from util.dm import *
 import multiprocessing
-import os
+from multiprocessing import Manager,Value
+
+import sys
+from PyQt5.QtWidgets import (QWidget, QToolTip,
+                             QPushButton, QApplication)
+from PyQt5.QtGui import QFont
+from PyQt5.QtCore import QThread
+import os,sys
 import psutil
 from explore.log import *
+'''
+全局变量
+'''
+cur_power = 0
+explore_mutex =  threading.Lock()
+chapter_num = 17
+simulater_num = 2
+explore_thread = None
+
+"""
+获取当前体力函数
+Parameters:
+
+Returns：
+  成功：当前体力整形值
+  失败：0
+Raises:
+"""
 def get_cur_power():
     # 获取当前体力
     str = get_str(764,17,808,41,color="b@2a1909-101010",sim=0.9)
@@ -13,7 +38,16 @@ def get_cur_power():
         power = int(str)
         return power
     else:
-        return None
+        return 0
+"""
+获取当前突破票数函数
+Parameters:
+
+Returns：
+  成功：当前突破票数
+  失败：0
+Raises:
+"""
 def get_cur_break_ticket():
     #获取当前结界突破票数
     str = get_str(989,16,1024,42,color="b@2a1909-101010",sim=0.9)
@@ -21,11 +55,30 @@ def get_cur_break_ticket():
         ticket = int(str)
         return ticket
     else:
-        return None
+        return 0
+"""
+好友任务处理线程
+
+暂时设定为所有邀请都取消，后期需要添加判定
+
+var:
+"""
 class friendTarget(multiprocessing.Process):
     def run(self):
         #所有申请都点击取消
         print("start friendTarget process")
+
+
+"""
+探索线程
+
+在run函数中是一个无限循环，首先做一个窗口绑定，然后进行探索，探索后刷新体力值
+探索流程：
+1.到探索场景
+2.进入全局变量的章节与难度对应的副本进行探索
+3.出来后刷新当前体力值
+var:
+"""
 class exploreThread(multiprocessing.Process):
     def __init__(self):
         multiprocessing.Process.__init__(self)
@@ -33,152 +86,189 @@ class exploreThread(multiprocessing.Process):
     def run(self):
         #首先判定锁是否被占用，若占用则堵塞，等待锁的释放
         global chapter_num
+        global cur_power
+        global explore_mutex
+        print("cur_power = " + str(cur_power))
+        print('explore pid: ' + str(os.getpid()))
         while(True):
             bind(2)
             print("waiting explore start...")
             if explore_mutex.acquire():
-                cur_power = get_cur_power()
-                if cur_power <= 20:
-                    #此处开始探索线程
-                    explore_mutex.release()
-                    continue
                 print("start exploring")
                 #到探索场景
                 print("change_scene('explore') need to be called")
                 #调用探索函数，进入一次，结束后应该在探索场景中
-
                 autoexplore(chapter=chapter_num, difficulty_mode=1)
+                cur_power = get_cur_power()
+                unbind_window()
                 explore_mutex.release()
+    def terminate(self):
+        print('enter explore terminate')
+        # ret = unbind_window()
+        # if(ret == 1):
+        #     print('unbind success')
+        print('explore super terminate')
+        super().terminate()
+
+
+"""
+突破线程
+
+暂时不能添加
+突破流程：
+var:
+"""
 class breakThread(multiprocessing.Process):
     def __init__(self):
         multiprocessing.Process.__init__(self)
         pid = os.getpid()
+        #self.daemon = True
     def run(self):
         #首先判定锁是否被占用，若占用则堵塞，等待锁的释放
         print("waiting breakTread start...")
         if explore_mutex.acquire():
             explore_mutex.release()
+"""
+任务分发主线程
+
+暂时不能添加
+突破流程：
+var:
+    explore_thread -当前正在进行的探索线程
+    break_thread - 当前正在进行的突破线程
+"""
+class mainThread(QThread):
+    def __init__(self):
+        super().__init__()
+        self.explore_thread = None
+        #self.break_thread = None
+    def run(self):
+        global cur_power
+        global explore_mutex
+
+        self.main_thread_window_bind()
+        print('main thread pid: ' + str(os.getpid()))
+        # 本线程应该无限循环进行各个任务的分发
+        while(1):
+            # change_scene('explore')
+            print('进入循环')
+            if(explore_mutex.acquire(5)):
+                print('start get power value')
+                cur_power = get_cur_power()
+                print('cur_power: ' + str(cur_power))
+                if cur_power >= 20:
+                    #体力大于等于20，创建新的探索线程对象，开始线程
+                    print("create explore_thread")
+                    self.explore_thread = exploreThread()
+                    print(os.getpid())
+                    print(self.explore_thread)
+                    self.explore_thread.daemon = False
+                    self.explore_thread.start()
+                    #self.explore_thread.join()
+                    #self.explore_thread.join()
+            print("can't get lock")
+    def terminate(self):
+        global explore_mutex
+        print('enter main_process terminate')
+        self.main_thread_window_unbind()
+        print('111')
+        print(self.explore_thread)
+        if(self.explore_thread != None):
+            if(self.explore_thread.is_alive()):
+                print('killing explore')
+                self.explore_thread.terminate()
+        print('super terminate')
+        super().terminate()
+
+
+    def main_thread_window_bind(self):
+        global simulater_num
+        bind(simulater_num)
+    def main_thread_window_unbind(self):
+        ret = unbind_window()
+        if(ret == 1):
+            print('unbind success')
 
 
 
-explore_mutex =  threading.Lock()
-chapter_num = 17
+#图形化界面
 
 
-
-
-#-----------------gui------------------------------
-import sys
-from PyQt5.QtWidgets import (QWidget, QToolTip,
-                             QPushButton, QApplication)
-from PyQt5.QtGui import QFont
-
-
+"""
+总体gui类
+"""
 class Example(QWidget):
 
     def __init__(self):
         super().__init__()
-        self.explore_thread = exploreThread()
-        self.break_thread = breakThread()
         self.initUI()
+        self.main_thread = None
 
 
     def initUI(self):
 
         QToolTip.setFont(QFont('SansSerif', 10))
 
-        self.setToolTip('This is a <b>QWidget</b> widget')
-
-        btn = QPushButton('start', self)
-        btn.setToolTip('开启主线程')
-        btn.resize(btn.sizeHint())
-        btn.clicked.connect(self.start_process)
-        btn.move(50, 50)
-
-        pause_btn = QPushButton('pause', self)
-        pause_btn.setToolTip('暂停全部线程')
-        pause_btn.resize(btn.sizeHint())
-        pause_btn.clicked.connect(self.pause_process)
-        pause_btn.move(150, 50)
-
-
+        self.setToolTip('welcome to tigougou')
+        #开始按钮
+        self.startBtn = QPushButton('start', self)
+        self.startBtn.setToolTip('开启主线程')
+        self.startBtn.resize(self.startBtn.sizeHint())
+        self.startBtn.clicked.connect(self.start_process)
+        self.startBtn.move(50, 50)
+        #暂停按钮
+        self.pause_btn = QPushButton('pause', self)
+        self.pause_btn.setToolTip('暂停全部线程')
+        self.pause_btn.resize(self.pause_btn.sizeHint())
+        self.pause_btn.clicked.connect(self.pause_process)
+        self.pause_btn.move(150, 50)
 
         self.setGeometry(300, 300, 300, 200)
-        self.setWindowTitle('Tooltips')
+        self.setWindowTitle('tigougou')
         self.show()
+    #开启线程处理程序
     def start_process(self):
+        global explore_mutex
         sender = self.sender()
         if(sender.text() == 'start'):
-            self.explore_thread = exploreThread()
-            self.break_thread = breakThread()
-            self.main_process(self.explore_thread, self.break_thread)
+            print('main_thread start')
+            if(not explore_mutex.acquire(0)):
+                explore_mutex.release()
+            else:
+                explore_mutex.release()
+            self.main_thread = mainThread()
+            self.main_thread.start()
             sender.setText('stop')
         elif(sender.text() == 'stop'):
-            if(self.explore_thread.is_alive()):
-                self.explore_thread.terminate()
-            unbind_window()
+            #unbind_window()
+            #print('unbind_success!')
+            if(self.main_thread.isRunning()):
+                print('kill main')
+                try:
+                    self.main_thread.terminate()
+                except Exception:
+                    explore_mutex.release()
+                    print('get main quit except')
             sender.setText('start')
 
+    #暂停线程处理程序
     def pause_process(self):
         sender = self.sender()
         print('sender is ' + sender.text())
         if(sender.text() == 'pause'):
-            if(self.explore_thread.is_alive()):
-                print('进程暂停  进程编号 %s ' %(self.explore_thread.pid))
-                p = psutil.Process(self.explore_thread.pid)
+            if(self.main_thread.explore_thread.is_alive()):
+                print('进程暂停  进程编号 %s ' %(self.main_thread.explore_thread.pid))
+                p = psutil.Process(self.main_thread.explore_thread.pid)
                 p.suspend()
-                unbind_window()
+                self.main_thread.main_thread_window_unbind()
             sender.setText('continue')
         elif(sender.text() == 'continue'):
-            if(self.explore_thread.is_alive()):
-                print('进程继续  进程编号 %s ' %(self.explore_thread.pid))
-                p = psutil.Process(self.explore_thread.pid)
+            if(self.main_thread.explore_thread.is_alive()):
+                print('进程继续  进程编号 %s ' %(self.main_thread.explore_thread.pid))
+                p = psutil.Process(self.main_thread.explore_thread.pid)
                 p.resume()
-                bind(2)
+                self.main_thread.main_thread_window_bind()
             sender.setText('pause')
-    def main_process(self,explore_thread,break_thread):
-        yaoguaituizhi_first = 0
-        yaoguaituizhi_baoxiang_first = 0
-        yaoguaituizhi_en = 0
-        yaoguaituizhi_baoxiang_en = 0
-
-
-        bind(2)
-        hour = int(time.strftime('%H',time.localtime(time.time())))
-        minute = int(time.strftime('%M', time.localtime(time.time())))
-        print("current time is " + str(hour) +":"+ str(minute))
-        #------------------定点活动------------------
-        #妖怪退治在13:00 - 13:30之间
-        if(hour == 13 and minute>10):
-            yaoguaituizhi_en = 1
-        #妖怪退治宝箱在13:30 - 14：00之间
-        elif(hour == 13 and minute > 40):
-            yaoguaituizhi_baoxiang_en = 1
-        #...鬼王，领体力等
-        #---------------------------------------------
-        if yaoguaituizhi_en == 1 and yaoguaituizhi_first != 1:
-            #change_scene("yaoguaituizhi")
-            #autoyaoguaituizhi()
-            yaoguaituizhi_first = 1
-        elif yaoguaituizhi_baoxiang_en == 1 & yaoguaituizhi_baoxiang_first != 1 :
-            #change_scene("yaoguaituizhi")
-            #autoyaoguaituizhi_baoxiang()
-            yaoguaituizhi_baoxiang_first = 1
-        #...其他情况
-        #在上述使能均关闭时，进行探索或结界判定
-        #change_scene('explore')
-        cur_power = get_cur_power()
-        cur_break_ticket = get_cur_break_ticket()
-        print("current power ： %d" % cur_power )
-        print("current break_ticket ： %d" % cur_break_ticket )
-        if cur_break_ticket >= 9:
-            #此处跑一波结界突破
-            print("break run...")
-            print("break runover")
-            #break_thread.start()
-        if cur_power >= 20:
-            #此处开始探索线程
-            explore_thread.start()
 
 
 
@@ -199,7 +289,6 @@ if __name__ == '__main__':
     sys.exit(app.exec_())
     # explore_thread = exploreThread()
     # explore_thread.start()
-
 
 
 
