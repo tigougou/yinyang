@@ -4,7 +4,8 @@ from explore.glb import *
 from util.dm import *
 import multiprocessing
 from multiprocessing import Manager,Value
-
+from activity.activity_function import  *
+import datetime
 import sys
 from PyQt5.QtWidgets import (QWidget, QToolTip,
                              QPushButton, QApplication)
@@ -90,18 +91,18 @@ class exploreThread(multiprocessing.Process):
         global explore_mutex
         print("cur_power = " + str(cur_power))
         print('explore pid: ' + str(os.getpid()))
-        while(True):
-            bind(2)
-            print("waiting explore start...")
-            if explore_mutex.acquire():
-                print("start exploring")
-                #到探索场景
-                print("change_scene('explore') need to be called")
-                #调用探索函数，进入一次，结束后应该在探索场景中
-                autoexplore(chapter=chapter_num, difficulty_mode=1)
-                cur_power = get_cur_power()
-                unbind_window()
-                explore_mutex.release()
+
+        bind(2)
+        print("waiting explore start...")
+        if explore_mutex.acquire():
+            print("start exploring")
+            #到探索场景
+            print("change_scene('explore') need to be called")
+            #调用探索函数，进入一次，结束后应该在探索场景中
+            autoexplore(chapter=chapter_num, difficulty_mode=1)
+            cur_power = get_cur_power()
+            unbind_window()
+            explore_mutex.release()
     def terminate(self):
         print('enter explore terminate')
         # ret = unbind_window()
@@ -145,17 +146,52 @@ class mainThread(QThread):
     def run(self):
         global cur_power
         global explore_mutex
-
+        yaoguaituizhi_first = 1
+        yaoguaituizhi_second = 1
+        yaoguaituizhi_gift_first = 1
+        yaoguaituizhi_gift_second = 1
+        power_get_first = 1
+        power_get_second = 1
+        last_yy_break_time = datetime.datetime.now()
         self.main_thread_window_bind()
         print('main thread pid: ' + str(os.getpid()))
         # 本线程应该无限循环进行各个任务的分发
         while(1):
-            # change_scene('explore')
             print('进入循环')
-            if(explore_mutex.acquire(timeout=3)):
-                print('start get power value')
+
+
+            #进入体力判定流程，首先进入探索界面
+            #change_scene('explore')
+            if(explore_mutex.acquire(timeout=30)):
+                print('cur_time: ' + time.strftime('%Y-%m-%d %H-%M-%S',time.localtime(time.time())))
+                cur_time = datetime.datetime.now()
+                hour = int(time.strftime('%H',time.localtime(time.time())))
+                minute = int(time.strftime('%M',time.localtime(time.time())))
+                #活动时间判断
+
+                if(hour == 12 and minute > 3 and power_get_first == 1):
+                    change_scene('yard')
+                    activity_power_get()
+                    power_get_first = 0
+                if(hour == 23 and minute > 3 and power_get_second == 1):
+                    change_scene('yard')
+                    activity_power_get()
+                    power_get_second = 0
+                #阴阳寮结界判定
+                #时间间隔700s
+                if((cur_time - last_yy_break_time).seconds > 700):
+                    print("start yy break")
+                    #等待结束
+                    last_yy_break_time = datetime.datetime.now()
+                print('start get power and ticket value')
+                #change_scene('explore')
                 cur_power = get_cur_power()
+                cur_break_ticket = get_cur_break_ticket()
                 print('cur_power: ' + str(cur_power))
+                print('cur_ticket: ' + str(cur_break_ticket))
+                if(cur_break_ticket >= 9):
+                    print("start breaking")
+
                 if cur_power >= 20:
                     #体力大于等于20，创建新的探索线程对象，开始线程
                     print("create explore_thread")
@@ -166,9 +202,12 @@ class mainThread(QThread):
                     self.explore_thread.start()
                     print('开启探索线程')
                     self.explore_thread.join()
-                #explore_mutex.release()
-                    #self.explore_thread.join()
-            else:print("can't get lock")
+                    explore_mutex.release()
+                    continue
+                #整个流程走完，释放锁
+                explore_mutex.release()
+            else:print("can't get lock,waiting.....")
+            time.sleep(30)
     def terminate(self):
         global explore_mutex
         print('enter main_process terminate')
