@@ -53,9 +53,10 @@ def glb_init():
     yard = Scene('yard', "", {"explore": Scene.fromYardToExplore})
     scene_dic[yard.name] = yard
     explore = Scene('explore',{'yard':""}, {} )
+    scene_dic[explore.name] = explore
     # 当前场景对象，进入游戏后，默认画面为庭院
     cur_scene = yard
-#glb_init()
+glb_init()
 
 
 
@@ -66,6 +67,7 @@ def change_scene(next_scene):
     #最多进行100次
     for i in range(100):
         #已经到指定场景
+        print("cur_scen.name = "+ str(cur_scene.name))
         if cur_scene.name == next_scene:
             return 1
         #指定场景在下层

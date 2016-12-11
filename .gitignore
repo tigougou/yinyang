@@ -3,3 +3,5 @@ dev/.idea/dev.iml
 *.pyc
 *.pyc
 *.pyc
+*.pyc
+dev/explore/test.py
