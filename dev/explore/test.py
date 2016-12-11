@@ -5,7 +5,7 @@ from bre.Break_yy_function import *
 from thread.target_distribute import *
 
 #WindowBind(1)
-
+#autoexplore(chapter = 17)
 #glb_init()
 #print(explore.higherSceneDict)
 #change_scene("explore")
@@ -13,6 +13,7 @@ from thread.target_distribute import *
 #break_yy_enter()
 
 #autobreak_yy()
+
 if __name__ == '__main__':
 
     app = QApplication(sys.argv)

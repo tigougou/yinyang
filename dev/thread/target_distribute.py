@@ -71,7 +71,7 @@ class friendTarget(multiprocessing.Process):
         pid = os.getpid()
     def run(self):
         #所有申请都点击取消
-        bind(2)
+        bind(1)
         print("start friendTarget process")
         while(1):
             find_pic_loop('process/denial.bmp',offsetx=261,offsety=367,wait_delta=3)
@@ -100,14 +100,14 @@ class exploreThread(multiprocessing.Process):
         print("cur_power = " + str(cur_power))
         print('explore pid: ' + str(os.getpid()))
 
-        bind(2)
+        bind(1)
         print("waiting explore start...")
         if explore_mutex.acquire():
             print("start exploring")
             #到探索场景
             print("change_scene('explore') need to be called")
             #调用探索函数，进入一次，结束后应该在探索场景中
-            autoexplore(chapter=chapter_num, difficulty_mode=1)
+            autoexplore(chapter=chapter_num, difficulty_mode=0)
             cur_power = get_cur_power()
             unbind_window()
             explore_mutex.release()
@@ -133,7 +133,7 @@ class yyBreakThread(multiprocessing.Process):
     def run(self):
         #首先判定锁是否被占用，若占用则堵塞，等待锁的释放
         print("yy breakTread start...")
-        bind(2)
+        bind(1)
         autobreak_yy()
         unbind_window()
 """
@@ -179,6 +179,7 @@ class mainThread(QThread):
         last_yy_break_time = datetime.datetime.now() - datetime.timedelta(seconds= 800)
         self.main_thread_window_bind()
         print('main thread pid: ' + str(os.getpid()))
+        time.sleep(5)
         self.friend_target_thread.start()
         # 本线程应该无限循环进行各个任务的分发
 
@@ -208,6 +209,7 @@ class mainThread(QThread):
                 if((cur_time - last_yy_break_time).seconds > 700):
                     print("start yy break")
                     self.yy_break_thread = yyBreakThread()
+                    time.sleep(5)
                     self.yy_break_thread.start()
                     self.yy_break_thread.join()
                     #等待结束
@@ -261,7 +263,7 @@ class mainThread(QThread):
 
     def main_thread_window_bind(self):
         global simulater_num
-        bind(simulater_num)
+        bind(1)
     def main_thread_window_unbind(self):
         ret = unbind_window()
         if(ret == 1):
@@ -363,6 +365,7 @@ class Example(QWidget):
                 if(self.main_thread.friend_target_thread.is_alive()):
                     p = psutil.Process(self.main_thread.friend_target_thread.pid)
                     p.resume()
+            time.sleep(5)
             self.main_thread.main_thread_window_bind()
             sender.setText('pause')
 

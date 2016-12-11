@@ -17,3 +17,5 @@ dev/thread/target_distribute.py
 dev/thread/target_distribute.py
 *.pyc
 *.pyc
+*.pyc
+dev/explore/test.py
