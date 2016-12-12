@@ -21,6 +21,7 @@ from explore.log import *
 cur_power = 0
 explore_mutex =  threading.Lock()
 chapter_num = 17
+difficulty_mode = 0
 simulater_num = 2
 explore_thread = None
 
@@ -108,7 +109,7 @@ class exploreThread(multiprocessing.Process):
             #到探索场景
             print("change_scene('explore') need to be called")
             #调用探索函数，进入一次，结束后应该在探索场景中
-            autoexplore(chapter=chapter_num, difficulty_mode=0)
+            autoexplore(chapter=chapter_num, difficulty_mode=difficulty_mode)
             cur_power = get_cur_power()
             unbind_window()
             explore_mutex.release()
