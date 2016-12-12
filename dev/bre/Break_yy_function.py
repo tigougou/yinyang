@@ -21,17 +21,16 @@ def break_yy_enter():
 Parameters:
 
 Returns：
-  未开启：0
-  已开启：1
+  可攻打的阴阳寮个数
 Raises:
 """
 def break_yy_judge():
     """本函数在阴阳寮选择界面下使用"""
     ret = find_pic_loop("break/breakopenflag.bmp|break/breakopenflag1.bmp",times=10, click_en = 0)
-    if ret =="":
-        return 0
-    else:
-        return 1
+    ret = ret.split('|')
+    ret = len(ret)
+
+    return 3
 """
 阴阳寮结界选择函数
 Parameters:
@@ -98,8 +97,11 @@ def break_yy_fightchoose( medal = 0,level = 0):
         if ret == "":
             return 0
         else:
-            moveto(575, 239)
-            whelldown()
+            moveto(820, 500)
+            left_down()
+            moveto(820, 200)
+            time.sleep(0.5)
+            left_up()
    #判断等级（根据奖牌数量的坐标寻找）
 
     ret = find_pic_loop("break/fight.bmp|break/fight1.bmp|break/fight2.bmp",  click_en=0, sim=0.8, times=10, wait_delta=0.1)
@@ -167,10 +169,8 @@ Raises:
 """
 def autobreak_yy(medal = 0):
     break_yy_enter()
-    for i in {1, 2, 3}:
-        ret = break_yy_judge()
-        if ret == 0:
-            break
+    a = break_yy_judge()
+    for i in range(1,a+1):
         break_yy_choose(number=i)
         ret = break_yy_fightchoose(medal = medal)
         if ret == 0:
