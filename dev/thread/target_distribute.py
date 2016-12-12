@@ -75,6 +75,7 @@ class friendTarget(multiprocessing.Process):
         print("start friendTarget process")
         while(1):
             find_pic_loop('process/denial.bmp',offsetx=261,offsety=367,wait_delta=3)
+            find_pic_loop('process/power_buy.bmp',offsetx=261,offsety=367,wait_delta=3)
 
 
 
@@ -189,6 +190,7 @@ class mainThread(QThread):
 
             #进入体力判定流程，首先进入探索界面
             #change_scene('explore')
+
             if(explore_mutex.acquire(timeout=30)):
                 print('cur_time: ' + time.strftime('%Y-%m-%d %H-%M-%S',time.localtime(time.time())))
                 cur_time = datetime.datetime.now()
@@ -196,11 +198,11 @@ class mainThread(QThread):
                 minute = int(time.strftime('%M',time.localtime(time.time())))
                 #活动时间判断
 
-                if(hour == 12 and minute > 3 and power_get_first == 1):
-                    change_scene('yard')
-                    activity_power_get()
-                    power_get_first = 0
-                    change_scene('explore')
+                # if(hour == 12 and minute > 3 and power_get_first == 1):
+                #     change_scene('yard')
+                #     activity_power_get()
+                #     power_get_first = 0
+                #     change_scene('explore')
                 # if(hour == 23 and minute > 3 and power_get_second == 1):
                 #     change_scene('yard')
                 #     activity_power_get()
