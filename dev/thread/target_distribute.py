@@ -24,7 +24,7 @@ chapter_num = 17
 difficulty_mode = 0
 simulater_num = 2
 explore_thread = None
-
+medal = 0 #奖牌数
 """
 获取当前体力函数
 Parameters:
@@ -136,7 +136,7 @@ class yyBreakThread(multiprocessing.Process):
         #首先判定锁是否被占用，若占用则堵塞，等待锁的释放
         print("yy breakTread start...")
         bind(1)
-        autobreak_yy()
+        autobreak_yy(medal = medal)
         unbind_window()
 """
 突破线程
