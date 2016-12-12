@@ -71,7 +71,7 @@ class friendTarget(multiprocessing.Process):
         pid = os.getpid()
     def run(self):
         #所有申请都点击取消
-        bind(1)
+        bind(2)
         print("start friendTarget process")
         while(1):
             find_pic_loop('process/denial.bmp',offsetx=261,offsety=367,wait_delta=3)
@@ -101,14 +101,14 @@ class exploreThread(multiprocessing.Process):
         print("cur_power = " + str(cur_power))
         print('explore pid: ' + str(os.getpid()))
 
-        bind(1)
+        bind(2)
         print("waiting explore start...")
         if explore_mutex.acquire():
             print("start exploring")
             #到探索场景
             print("change_scene('explore') need to be called")
             #调用探索函数，进入一次，结束后应该在探索场景中
-            autoexplore(chapter=chapter_num, difficulty_mode=0)
+            autoexplore(chapter=chapter_num, difficulty_mode=1)
             cur_power = get_cur_power()
             unbind_window()
             explore_mutex.release()
@@ -134,7 +134,7 @@ class yyBreakThread(multiprocessing.Process):
     def run(self):
         #首先判定锁是否被占用，若占用则堵塞，等待锁的释放
         print("yy breakTread start...")
-        bind(1)
+        bind(2)
         autobreak_yy()
         unbind_window()
 """
@@ -198,15 +198,16 @@ class mainThread(QThread):
                 minute = int(time.strftime('%M',time.localtime(time.time())))
                 #活动时间判断
 
-                # if(hour == 12 and minute > 3 and power_get_first == 1):
-                #     change_scene('yard')
-                #     activity_power_get()
-                #     power_get_first = 0
-                #     change_scene('explore')
-                # if(hour == 23 and minute > 3 and power_get_second == 1):
-                #     change_scene('yard')
-                #     activity_power_get()
-                #     power_get_second = 0
+                if(hour == 12 and minute > 3 and power_get_first == 1):
+                    change_scene('yard')
+                    activity_power_get()
+                    power_get_first = 0
+                    change_scene('explore')
+                if(hour == 22 and minute > 3 and power_get_second == 1):
+                    change_scene('yard')
+                    activity_power_get()
+                    power_get_second = 0
+                    change_scene('explore')
                 #阴阳寮结界判定
                 #时间间隔700s
                 if((cur_time - last_yy_break_time).seconds > 700):
@@ -266,7 +267,7 @@ class mainThread(QThread):
 
     def main_thread_window_bind(self):
         global simulater_num
-        bind(1)
+        bind(2)
     def main_thread_window_unbind(self):
         ret = unbind_window()
         if(ret == 1):
@@ -394,7 +395,6 @@ class Example(QWidget):
 
 
 if __name__ == '__main__':
-
     app = QApplication(sys.argv)
     ex = Example()
     sys.exit(app.exec_())
