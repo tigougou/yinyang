@@ -12,10 +12,11 @@ from thread.target_distribute import *
 #change_scene("yard")
 #break_yy_enter()
 
-#autobreak_yy()
+
 
 if __name__ == '__main__':
 
     app = QApplication(sys.argv)
     ex = Example()
     sys.exit(app.exec_())
+

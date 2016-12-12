@@ -21,9 +21,10 @@ from explore.log import *
 cur_power = 0
 explore_mutex =  threading.Lock()
 chapter_num = 17
+difficulty_mode = 0
 simulater_num = 2
 explore_thread = None
-
+medal = 0 #奖牌数
 """
 获取当前体力函数
 Parameters:
@@ -108,7 +109,11 @@ class exploreThread(multiprocessing.Process):
             #到探索场景
             print("change_scene('explore') need to be called")
             #调用探索函数，进入一次，结束后应该在探索场景中
+<<<<<<< HEAD
             autoexplore(chapter=chapter_num, difficulty_mode=1)
+=======
+            autoexplore(chapter=chapter_num, difficulty_mode=difficulty_mode)
+>>>>>>> origin/master
             cur_power = get_cur_power()
             unbind_window()
             explore_mutex.release()
@@ -134,8 +139,13 @@ class yyBreakThread(multiprocessing.Process):
     def run(self):
         #首先判定锁是否被占用，若占用则堵塞，等待锁的释放
         print("yy breakTread start...")
+<<<<<<< HEAD
         bind(2)
         autobreak_yy()
+=======
+        bind(1)
+        autobreak_yy(medal = medal)
+>>>>>>> origin/master
         unbind_window()
 """
 突破线程
