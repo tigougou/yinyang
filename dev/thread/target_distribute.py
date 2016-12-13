@@ -109,7 +109,7 @@ class exploreThread(multiprocessing.Process):
             print("change_scene('explore') need to be called")
             #调用探索函数，进入一次，结束后应该在探索场景中
             autoexplore(chapter=chapter_num, difficulty_mode=difficulty_mode)
-            
+
             cur_power = get_cur_power()
             unbind_window()
             explore_mutex.release()
@@ -136,11 +136,8 @@ class yyBreakThread(multiprocessing.Process):
         #首先判定锁是否被占用，若占用则堵塞，等待锁的释放
         print("yy breakTread start...")
 
-<<<<<<< HEAD
-        bind(2)
-=======
+
         bind(1)
->>>>>>> origin/master
         autobreak_yy(medal = medal)
         unbind_window()
 """
@@ -319,6 +316,7 @@ class Example(QWidget):
         vbox = QVBoxLayout()
         vbox.addLayout(hbox)
         vbox.addStretch(1)
+        self.setLayout(vbox)
 
         self.setGeometry(300, 300, 300, 200)
         self.setWindowTitle('tigougou')
