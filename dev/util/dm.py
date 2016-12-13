@@ -24,7 +24,7 @@ def WindowBind(type):
         hwnd = dm.EnumWindow(hwnd, "", "", 0)
         hwnds = hwnd.split(',')
         for id in hwnds:
-            print(str(id) + ": " + dm.GetWindowClass(id) + " titile: " + dm.GetWindowTitle(id))
+            #print(str(id) + ": " + dm.GetWindowClass(id) + " titile: " + dm.GetWindowTitle(id))
             if (dm.GetWindowClass(id).startswith("WindowsForms10.Window.8.app.") and dm.GetWindowTitle(id) == ""):
                 print("binding hwnd: " + str(id))
                 ret = dm.BindWindowEx(id, "dx2", "dx", "dx","dx", 0)
@@ -42,7 +42,7 @@ def WindowBind(type):
         print("find xiaoyao! hwnd: " + str(hwnd))
         hwnds = hwnd.split(',')
         for id in hwnds:
-            print(str(id) + ": " + dm.GetWindowClass(id) + " titile: " + dm.GetWindowTitle(id))
+            #print(str(id) + ": " + dm.GetWindowClass(id) + " titile: " + dm.GetWindowTitle(id))
             if (dm.GetWindowClass(id) == "Qt5QWindowIcon" and dm.GetWindowTitle(id) == "RenderWindowWindow"):
                 ret = dm.BindWindowEx(id, "dx.graphic.opengl", "dx", "dx", "dx", 0)
                 if (ret != 0):
