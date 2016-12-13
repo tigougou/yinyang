@@ -9,7 +9,7 @@ from activity.activity_function import  *
 import datetime
 import sys
 from PyQt5.QtWidgets import (QWidget, QToolTip,
-                             QPushButton, QApplication)
+                             QPushButton, QApplication,QVBoxLayout,QHBoxLayout)
 from PyQt5.QtGui import QFont
 from PyQt5.QtCore import QThread
 import os,sys
@@ -21,10 +21,10 @@ from explore.log import *
 cur_power = 0
 explore_mutex =  threading.Lock()
 chapter_num = 17
-difficulty_mode = 0
+difficulty_mode = 1
 simulater_num = 2
 explore_thread = None
-medal = 0 #奖牌数
+medal = 4#奖牌数
 """
 获取当前体力函数
 Parameters:
@@ -76,8 +76,7 @@ class friendTarget(multiprocessing.Process):
         print("start friendTarget process")
         while(1):
             find_pic_loop('process/denial.bmp',offsetx=261,offsety=367,wait_delta=3)
-            find_pic_loop('process/power_buy.bmp',offsetx=261,offsety=367,wait_delta=3)
-
+            find_pic_loop('process/power_buy.bmp',offsetx=0,offsety=0,wait_delta=3)
 
 
 """
@@ -109,11 +108,8 @@ class exploreThread(multiprocessing.Process):
             #到探索场景
             print("change_scene('explore') need to be called")
             #调用探索函数，进入一次，结束后应该在探索场景中
-<<<<<<< HEAD
-            autoexplore(chapter=chapter_num, difficulty_mode=1)
-=======
             autoexplore(chapter=chapter_num, difficulty_mode=difficulty_mode)
->>>>>>> origin/master
+
             cur_power = get_cur_power()
             unbind_window()
             explore_mutex.release()
@@ -139,13 +135,9 @@ class yyBreakThread(multiprocessing.Process):
     def run(self):
         #首先判定锁是否被占用，若占用则堵塞，等待锁的释放
         print("yy breakTread start...")
-<<<<<<< HEAD
+
         bind(2)
-        autobreak_yy()
-=======
-        bind(1)
         autobreak_yy(medal = medal)
->>>>>>> origin/master
         unbind_window()
 """
 突破线程
@@ -305,17 +297,24 @@ class Example(QWidget):
 
         self.setToolTip('welcome to tigougou')
         #开始按钮
-        self.startBtn = QPushButton('start', self)
+        self.startBtn = QPushButton('start')
         self.startBtn.setToolTip('开启主线程')
         self.startBtn.resize(self.startBtn.sizeHint())
         self.startBtn.clicked.connect(self.start_process)
-        self.startBtn.move(50, 50)
         #暂停按钮
-        self.pause_btn = QPushButton('pause', self)
+        self.pause_btn = QPushButton('pause')
         self.pause_btn.setToolTip('暂停全部线程')
         self.pause_btn.resize(self.pause_btn.sizeHint())
         self.pause_btn.clicked.connect(self.pause_process)
-        self.pause_btn.move(150, 50)
+        #第一行
+        hbox = QHBoxLayout()
+        hbox.addWidget(self.startBtn)
+        hbox.addWidget(self.pause_btn)
+        hbox.addStretch(1)
+        #整体布局
+        vbox = QVBoxLayout()
+        vbox.addLayout(hbox)
+        vbox.addStretch(1)
 
         self.setGeometry(300, 300, 300, 200)
         self.setWindowTitle('tigougou')
