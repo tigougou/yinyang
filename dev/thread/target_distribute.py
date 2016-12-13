@@ -9,15 +9,17 @@ from activity.activity_function import  *
 import datetime
 import sys
 from PyQt5.QtWidgets import (QWidget, QToolTip,
-                             QPushButton, QApplication,QVBoxLayout,QHBoxLayout)
+                             QPushButton, QApplication,QVBoxLayout,QHBoxLayout,QComboBox,QLabel,QCheckBox)
 from PyQt5.QtGui import QFont
 from PyQt5.QtCore import QThread
+
 import os,sys
 import psutil
 from explore.log import *
 '''
 全局变量
 '''
+yy_break_en = False
 cur_power = 0
 explore_mutex =  threading.Lock()
 chapter_num = 17
@@ -71,8 +73,9 @@ class friendTarget(multiprocessing.Process):
         multiprocessing.Process.__init__(self)
         pid = os.getpid()
     def run(self):
+        global  simulater_num
         #所有申请都点击取消
-        bind(2)
+        bind(simulater_num)
         print("start friendTarget process")
         while(1):
             find_pic_loop('process/denial.bmp',offsetx=261,offsety=367,wait_delta=3)
@@ -98,10 +101,11 @@ class exploreThread(multiprocessing.Process):
         global chapter_num
         global cur_power
         global explore_mutex
+        global simulater_num
         print("cur_power = " + str(cur_power))
         print('explore pid: ' + str(os.getpid()))
 
-        bind(2)
+        bind(simulater_num)
         print("waiting explore start...")
         if explore_mutex.acquire():
             print("start exploring")
@@ -136,8 +140,8 @@ class yyBreakThread(multiprocessing.Process):
         #首先判定锁是否被占用，若占用则堵塞，等待锁的释放
         print("yy breakTread start...")
 
-
-        bind(1)
+        global simulater_num
+        bind(simulater_num)
         autobreak_yy(medal = medal)
         unbind_window()
 """
@@ -174,6 +178,7 @@ class mainThread(QThread):
     def run(self):
         global cur_power
         global explore_mutex
+        global yy_break_en
         yaoguaituizhi_first = 1
         yaoguaituizhi_second = 1
         yaoguaituizhi_gift_first = 1
@@ -213,7 +218,7 @@ class mainThread(QThread):
                     change_scene('explore')
                 #阴阳寮结界判定
                 #时间间隔700s
-                if((cur_time - last_yy_break_time).seconds > 700):
+                if((cur_time - last_yy_break_time).seconds > 700 and yy_break_en):
                     print("start yy break")
                     self.yy_break_thread = yyBreakThread()
                     time.sleep(5)
@@ -270,7 +275,7 @@ class mainThread(QThread):
 
     def main_thread_window_bind(self):
         global simulater_num
-        bind(2)
+        bind(simulater_num)
     def main_thread_window_unbind(self):
         ret = unbind_window()
         if(ret == 1):
@@ -307,20 +312,90 @@ class Example(QWidget):
         self.pause_btn.setToolTip('暂停全部线程')
         self.pause_btn.resize(self.pause_btn.sizeHint())
         self.pause_btn.clicked.connect(self.pause_process)
-        #第一行
+        #章节选择标签
+        self.chapter_label = QLabel('章节数')
+        #章节选择combobox
+        self.chapter_combo = QComboBox()
+        for i in range(1,19):
+            self.chapter_combo.addItem("%d" % i)
+        self.chapter_combo.activated[str].connect(self.chapter_combo_change)
+        #模拟器选择标签
+        self.simulater_label = QLabel('模拟器')
+        #模拟器选择combobox
+        self.simulater_combo = QComboBox()
+        self.simulater_combo.addItem("blue stacks")
+        self.simulater_combo.addItem("逍遥安卓")
+        self.simulater_combo.activated[str].connect(self.simulater_combo_change)
+        #难度选择标签
+        self.difficulty_label = QLabel('难度  ')
+        #难度选择combobox
+        self.difficulty_combo = QComboBox()
+        self.difficulty_combo.addItem("简单")
+        self.difficulty_combo.addItem("困难")
+        self.difficulty_combo.activated[str].connect(self.difficulty_combo_change)
+        #阴阳寮突破选择checkbox
+        self.yy_check_box = QCheckBox('阴阳寮突破')
+        self.yy_check_box.stateChanged.connect(self.yy_change)
+        #最后一行
         hbox = QHBoxLayout()
         hbox.addWidget(self.startBtn)
         hbox.addWidget(self.pause_btn)
         hbox.addStretch(1)
+        #第一行
+        hbox_chapter = QHBoxLayout()
+        hbox_chapter.addWidget(self.chapter_label)
+        hbox_chapter.addWidget(self.chapter_combo)
+        hbox_chapter.addStretch(1)
+        #第二行
+        hbox_simulater = QHBoxLayout()
+        hbox_simulater.addWidget(self.simulater_label)
+        hbox_simulater.addWidget(self.simulater_combo)
+        hbox_simulater.addStretch(1)
+        #第三行
+        hbox_difficulty = QHBoxLayout()
+        hbox_difficulty.addWidget(self.difficulty_label)
+        hbox_difficulty.addWidget(self.difficulty_combo)
+        hbox_difficulty.addStretch(1)
+        #第四行
+        hbox_yy = QHBoxLayout()
+        hbox_yy.addWidget(self.yy_check_box)
+        hbox_yy.addStretch(1)
         #整体布局
+
         vbox = QVBoxLayout()
-        vbox.addLayout(hbox)
+        vbox.addLayout(hbox_chapter)
+        vbox.addLayout(hbox_simulater)
+        vbox.addLayout(hbox_difficulty)
+        vbox.addLayout(hbox_yy)
         vbox.addStretch(1)
+        vbox.addLayout(hbox)
         self.setLayout(vbox)
 
         self.setGeometry(300, 300, 300, 200)
         self.setWindowTitle('tigougou')
         self.show()
+    def yy_change(self):
+        global yy_break_en
+        yy_break_en = not yy_break_en
+        print('是否进行阴阳寮突破： ' + str(yy_break_en))
+    def difficulty_combo_change(self, difficulty):
+        global difficulty_mode
+        if difficulty == '简单':
+            difficulty_mode = 0
+        elif difficulty_mode == '困难':
+            difficulty_mode = 1
+        print('changed to difficult: ' + str(difficulty_mode))
+    def chapter_combo_change(self, chapter):
+        global chapter_num
+        chapter_num = int(chapter)
+        print('changed to chapter: ' + str(chapter))
+    def simulater_combo_change(self, simulater_name):
+        global simulater_num
+        if(simulater_name == 'blue stacks'):
+            simulater_num = 1
+        elif simulater_name == '逍遥安卓':
+            simulater_num = 2
+        print('simulater_num changed into ' + str(simulater_num))
     def closeEvent(self, event):
         if(self.main_thread.isRunning()):
             print('kill main')
