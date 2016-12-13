@@ -9,7 +9,7 @@ from activity.activity_function import  *
 import datetime
 import sys
 from PyQt5.QtWidgets import (QWidget, QToolTip,
-                             QPushButton, QApplication,QVBoxLayout,QHBoxLayout,QComboBox,QLabel,QCheckBox)
+                             QPushButton, QApplication,QVBoxLayout,QHBoxLayout,QComboBox,QLabel,QCheckBox,QLineEdit)
 from PyQt5.QtGui import QFont
 from PyQt5.QtCore import QThread
 
@@ -19,14 +19,17 @@ from explore.log import *
 '''
 全局变量
 '''
-yy_break_en = False
+chapter_times = 100000
+yy_break_en = True
+explore_en = True
+power_get_en = True
 cur_power = 0
 explore_mutex =  threading.Lock()
-chapter_num = 17
-difficulty_mode = 1
-simulater_num = 2
+chapter_num = 1
+difficulty_mode = 0
+simulater_num = 1
 explore_thread = None
-medal = 4#奖牌数
+yy_medal_num = 0#奖牌数
 """
 获取当前体力函数
 Parameters:
@@ -69,13 +72,13 @@ def get_cur_break_ticket():
 var:
 """
 class friendTarget(multiprocessing.Process):
-    def __init__(self):
+    def __init__(self, num = 1):
         multiprocessing.Process.__init__(self)
+        self.simulater_num = num
         pid = os.getpid()
     def run(self):
-        global  simulater_num
         #所有申请都点击取消
-        bind(simulater_num)
+        bind(self.simulater_num)
         print("start friendTarget process")
         while(1):
             find_pic_loop('process/denial.bmp',offsetx=261,offsety=367,wait_delta=3)
@@ -93,26 +96,26 @@ class friendTarget(multiprocessing.Process):
 var:
 """
 class exploreThread(multiprocessing.Process):
-    def __init__(self):
+    def __init__(self, num = 1,chapter = 17):
         multiprocessing.Process.__init__(self)
         pid = os.getpid()
+        self.simulater_num = num
+        self.chapter_num = chapter
     def run(self):
         #首先判定锁是否被占用，若占用则堵塞，等待锁的释放
-        global chapter_num
         global cur_power
         global explore_mutex
-        global simulater_num
         print("cur_power = " + str(cur_power))
         print('explore pid: ' + str(os.getpid()))
 
-        bind(simulater_num)
+        bind(self.simulater_num)
         print("waiting explore start...")
         if explore_mutex.acquire():
             print("start exploring")
             #到探索场景
             print("change_scene('explore') need to be called")
             #调用探索函数，进入一次，结束后应该在探索场景中
-            autoexplore(chapter=chapter_num, difficulty_mode=difficulty_mode)
+            autoexplore(chapter=self.chapter, difficulty_mode=difficulty_mode)
 
             cur_power = get_cur_power()
             unbind_window()
@@ -132,17 +135,17 @@ class exploreThread(multiprocessing.Process):
 var:
 """
 class yyBreakThread(multiprocessing.Process):
-    def __init__(self):
+    def __init__(self,num = 1):
         multiprocessing.Process.__init__(self)
         pid = os.getpid()
+        self.simulater_num = num
         #self.daemon = True
     def run(self):
         #首先判定锁是否被占用，若占用则堵塞，等待锁的释放
         print("yy breakTread start...")
-
-        global simulater_num
-        bind(simulater_num)
-        autobreak_yy(medal = medal)
+        global yy_medal_num
+        bind(self.simulater_num)
+        autobreak_yy(medal = yy_medal_num)
         unbind_window()
 """
 突破线程
@@ -173,12 +176,17 @@ class mainThread(QThread):
         super().__init__()
         self.explore_thread = None
         self.yy_break_thread = None
-        self.friend_target_thread = friendTarget()
+        self.friend_target_thread = friendTarget(num=simulater_num)
         #self.break_thread = None
     def run(self):
         global cur_power
         global explore_mutex
         global yy_break_en
+        global explore_en
+        global power_get_en
+        global chapter_times
+        global simulater_num
+        global chapter_num
         yaoguaituizhi_first = 1
         yaoguaituizhi_second = 1
         yaoguaituizhi_gift_first = 1
@@ -192,7 +200,7 @@ class mainThread(QThread):
         self.friend_target_thread.start()
         # 本线程应该无限循环进行各个任务的分发
 
-        while(1):
+        for i in range(chapter_times):
             print('进入循环')
 
 
@@ -206,12 +214,12 @@ class mainThread(QThread):
                 minute = int(time.strftime('%M',time.localtime(time.time())))
                 #活动时间判断
 
-                if(hour == 12 and minute > 3 and power_get_first == 1):
+                if(hour == 12 and minute > 3 and power_get_first == 1 and power_get_en):
                     change_scene('yard')
                     activity_power_get()
                     power_get_first = 0
                     change_scene('explore')
-                if(hour == 22 and minute > 3 and power_get_second == 1):
+                if(hour == 20and minute > 3 and power_get_second == 1 and power_get_en):
                     change_scene('yard')
                     activity_power_get()
                     power_get_second = 0
@@ -220,7 +228,7 @@ class mainThread(QThread):
                 #时间间隔700s
                 if((cur_time - last_yy_break_time).seconds > 700 and yy_break_en):
                     print("start yy break")
-                    self.yy_break_thread = yyBreakThread()
+                    self.yy_break_thread = yyBreakThread(num=simulater_num)
                     time.sleep(5)
                     self.yy_break_thread.start()
                     self.yy_break_thread.join()
@@ -234,11 +242,10 @@ class mainThread(QThread):
                 print('cur_ticket: ' + str(cur_break_ticket))
                 if(cur_break_ticket >= 9):
                     print("start breaking")
-
-                if cur_power >= 20:
+                if cur_power >= 20 and explore_en:
                     #体力大于等于20，创建新的探索线程对象，开始线程
                     print("create explore_thread")
-                    self.explore_thread = exploreThread()
+                    self.explore_thread = exploreThread(num=simulater_num, chapter=chapter_num)
                     print(os.getpid())
                     print(self.explore_thread)
                     self.explore_thread.daemon = False
@@ -293,6 +300,7 @@ class Example(QWidget):
 
     def __init__(self):
         super().__init__()
+
         self.initUI()
         self.main_thread = None
 
@@ -319,6 +327,11 @@ class Example(QWidget):
         for i in range(1,19):
             self.chapter_combo.addItem("%d" % i)
         self.chapter_combo.activated[str].connect(self.chapter_combo_change)
+        self.chapter_num_label = QLabel('次数')
+        self.chapter_times_text = QLineEdit()
+        self.chapter_times_text.setFixedWidth(50)
+        self.chapter_times_text.setText(str(chapter_times))
+        self.chapter_times_text.textChanged[str].connect(self.chapter_times_changed)
         #模拟器选择标签
         self.simulater_label = QLabel('模拟器')
         #模拟器选择combobox
@@ -335,7 +348,21 @@ class Example(QWidget):
         self.difficulty_combo.activated[str].connect(self.difficulty_combo_change)
         #阴阳寮突破选择checkbox
         self.yy_check_box = QCheckBox('阴阳寮突破')
+        self.yy_check_box.toggle()
         self.yy_check_box.stateChanged.connect(self.yy_change)
+        self.yy_label = QLabel('奖牌数')
+        self.yy_combo = QComboBox()
+        for i in range(6):
+            self.yy_combo.addItem("%d" % i)
+        self.yy_combo.activated[str].connect(self.yy_combo_change)
+        #探索选择checkbox
+        self.explorer_check_box = QCheckBox('探索')
+        self.explorer_check_box.toggle()
+        self.explorer_check_box.stateChanged.connect(self.explore_change)
+        #自动领取选择checkbox
+        self.power_get_check_box = QCheckBox('体力领取')
+        self.power_get_check_box.toggle()
+        self.power_get_check_box.stateChanged.connect(self.power_get_change)
         #最后一行
         hbox = QHBoxLayout()
         hbox.addWidget(self.startBtn)
@@ -345,6 +372,8 @@ class Example(QWidget):
         hbox_chapter = QHBoxLayout()
         hbox_chapter.addWidget(self.chapter_label)
         hbox_chapter.addWidget(self.chapter_combo)
+        hbox_chapter.addWidget(self.chapter_num_label)
+        hbox_chapter.addWidget(self.chapter_times_text)
         hbox_chapter.addStretch(1)
         #第二行
         hbox_simulater = QHBoxLayout()
@@ -359,7 +388,17 @@ class Example(QWidget):
         #第四行
         hbox_yy = QHBoxLayout()
         hbox_yy.addWidget(self.yy_check_box)
+        hbox_yy.addWidget(self.yy_label)
+        hbox_yy.addWidget(self.yy_combo)
         hbox_yy.addStretch(1)
+        #第五行
+        hbox_explore = QHBoxLayout()
+        hbox_explore.addWidget(self.explorer_check_box)
+        hbox_explore.addStretch(1)
+        #第六行
+        hbox_power_get = QHBoxLayout()
+        hbox_power_get.addWidget(self.power_get_check_box)
+        hbox_power_get.addStretch(1)
         #整体布局
 
         vbox = QVBoxLayout()
@@ -367,6 +406,8 @@ class Example(QWidget):
         vbox.addLayout(hbox_simulater)
         vbox.addLayout(hbox_difficulty)
         vbox.addLayout(hbox_yy)
+        vbox.addLayout(hbox_explore)
+        vbox.addLayout(hbox_power_get)
         vbox.addStretch(1)
         vbox.addLayout(hbox)
         self.setLayout(vbox)
@@ -374,6 +415,27 @@ class Example(QWidget):
         self.setGeometry(300, 300, 300, 200)
         self.setWindowTitle('tigougou')
         self.show()
+    def chapter_times_changed(self, times):
+        global chapter_times
+        if times.isdigit():
+            chapter_times = int(times)
+        else:
+            self.chapter_times_text.setText('-1')
+            chapter_times = 100000
+
+        print('突破次数：' + str(chapter_times))
+    def yy_combo_change(self, medal):
+        global yy_medal_num
+        yy_medal_num = int(medal)
+        print('medal less than ' + str(yy_medal_num))
+    def power_get_change(self):
+        global power_get_en
+        power_get_en = not power_get_en
+        print('是否自动获取体力' + str(power_get_en))
+    def explore_change(self):
+        global explore_en
+        explore_en = not explore_en
+        print('是否进行探索刷狗粮： ' + str(explore_en))
     def yy_change(self):
         global yy_break_en
         yy_break_en = not yy_break_en
@@ -382,7 +444,7 @@ class Example(QWidget):
         global difficulty_mode
         if difficulty == '简单':
             difficulty_mode = 0
-        elif difficulty_mode == '困难':
+        elif difficulty == '困难':
             difficulty_mode = 1
         print('changed to difficult: ' + str(difficulty_mode))
     def chapter_combo_change(self, chapter):
@@ -405,6 +467,7 @@ class Example(QWidget):
                 explore_mutex.release()
                 print('get main quit except')
             event.accept()
+
     #开启线程处理程序
     def start_process(self):
         global explore_mutex
