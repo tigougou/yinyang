@@ -29,7 +29,7 @@ chapter_num = 1
 difficulty_mode = 0
 simulater_num = 1
 explore_thread = None
-yy_medal_num = 0#奖牌数
+yy_medal_num = 4#奖牌数
 """
 获取当前体力函数
 Parameters:
@@ -96,11 +96,12 @@ class friendTarget(multiprocessing.Process):
 var:
 """
 class exploreThread(multiprocessing.Process):
-    def __init__(self, num = 1,chapter = 17):
+    def __init__(self, num = 1,chapter = 17,difficulty_mode = 0):
         multiprocessing.Process.__init__(self)
         pid = os.getpid()
         self.simulater_num = num
         self.chapter_num = chapter
+        self.difficulty_mode = difficulty_mode
     def run(self):
         #首先判定锁是否被占用，若占用则堵塞，等待锁的释放
         global cur_power
@@ -115,7 +116,7 @@ class exploreThread(multiprocessing.Process):
             #到探索场景
             print("change_scene('explore') need to be called")
             #调用探索函数，进入一次，结束后应该在探索场景中
-            autoexplore(chapter=self.chapter, difficulty_mode=difficulty_mode)
+            autoexplore(chapter=self.chapter_num, difficulty_mode=self.difficulty_mode)
 
             cur_power = get_cur_power()
             unbind_window()
@@ -187,6 +188,7 @@ class mainThread(QThread):
         global chapter_times
         global simulater_num
         global chapter_num
+        global difficulty_mode
         yaoguaituizhi_first = 1
         yaoguaituizhi_second = 1
         yaoguaituizhi_gift_first = 1
@@ -245,7 +247,7 @@ class mainThread(QThread):
                 if cur_power >= 20 and explore_en:
                     #体力大于等于20，创建新的探索线程对象，开始线程
                     print("create explore_thread")
-                    self.explore_thread = exploreThread(num=simulater_num, chapter=chapter_num)
+                    self.explore_thread = exploreThread(num=simulater_num, chapter=chapter_num, difficulty_mode=difficulty_mode)
                     print(os.getpid())
                     print(self.explore_thread)
                     self.explore_thread.daemon = False
