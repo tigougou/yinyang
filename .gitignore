@@ -19,3 +19,15 @@ dev/thread/target_distribute.py
 *.pyc
 *.pyc
 dev/explore/test.py
+<<<<<<< HEAD
+dev/explore/test.py
+*.pyc
+dev/explore/test.py
+*.pyc
+dev/explore/test.py
+dev/explore/test.py
+=======
+>>>>>>> origin/master
+dev/activity/activity_function.py
+dev/thread/target_distribute.py
+dev/activity/activity_function.py
