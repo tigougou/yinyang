@@ -38,6 +38,9 @@ def enter_explore(chapter = 17 , difficulty_mode = 0):
     """ 本函数调用前需要人物在探索场景下 """
     # 根据章节号找到对应的章节并点击
     chapter_choose(chapter)
+    #判断是否在式神挑战状态
+
+
     # 选择对应难度并点击探索按钮进入
     if difficulty_mode == 0:
         scene_chang_handle("explore/normalflag.bmp", "explore/normal.bmp")
