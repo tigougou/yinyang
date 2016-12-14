@@ -27,6 +27,10 @@ Raises:
 def break_yy_judge():
     """本函数在阴阳寮选择界面下使用"""
     ret = find_pic_loop("break/weigongda2.bmp",times=10, click_en = 0)
+<<<<<<< HEAD
+=======
+    if ret =="":return 3
+>>>>>>> origin/master
     ret = ret.split('|')
     ret = len(ret)
     ret = 3 - ret

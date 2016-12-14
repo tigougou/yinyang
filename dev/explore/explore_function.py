@@ -29,7 +29,7 @@ def chapter_choose(chapter = 17):
             left_down()
             moveto(1172,622)
             left_up()
-            ret = find_pic_loop("explore/chapter-1.bmp", click_en=0, sim=0.7, times=3)
+            ret = find_pic_loop("explore/chapter-1.bmp", click_en=0, sim=0.8, times=3)
             if ret != "":
                 break
         for i in range(0,10):
@@ -169,7 +169,7 @@ def autoexplore(chapter,difficulty_mode = 0):
             if ret =="":break
         moveto(1,1)
         click_until_pic("explore/fightend_win_giftopen.bmp")
-        scene_chang_handle("explore/exploreEnterflag.bmp", "explore/fightend_win_giftopen.bmp", delaytime=0.1,
+        scene_chang_handle("explore/exploreflag.bmp", "explore/fightend_win_giftopen.bmp", delaytime=0.1,
                            tryTimes=2000)
     return 1
 
