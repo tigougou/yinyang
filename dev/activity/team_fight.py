@@ -85,7 +85,7 @@ Parameters:
                            5：跳跳哥哥
                            6：二口女
                            7：骨女
-                           6：饿鬼
+                           8：饿鬼
                     fight_type = 0-4时为层数
 Returns:
   成功：1
