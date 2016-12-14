@@ -14,9 +14,12 @@ def break_person_enter():
     """本函数在探索界面下使用"""
     scene_chang_handle("break/enterbreak_flag.bmp","break/enterbreak.bmp",delaytime = 1,tryTimes = 30)
     scene_chang_handle("break/enterbreak2.bmp","break/breakpersonflag.bmp",delaytime = 1,tryTimes = 30)
-    scene_chang_handle("break/refreshflag.bmp", "break/refresh.bmp", delaytime=1, tryTimes=30)
+    #scene_chang_handle("break/refreshflag.bmp", "break/refresh.bmp", delaytime=1, tryTimes=30)
+    ret = find_pic_loop("break/refresh.bmp",times=30)
+    if(ret == ""):
+        return 0
     scene_chang_handle("break/norefreshflag.bmp", "break/refreshconfirm.bmp", delaytime=1, tryTimes=30)
-
+    return 1
 """
 个人结界突破选择函数
 从奖牌低到高攻打
@@ -82,7 +85,7 @@ Raises:
 """
 def autobreak_personal(number = 3,medal = 3):
     win_number = 0
-    break_person_enter()
+    ret = break_person_enter()
     for i in(0,number):
         ret = break_person_choose(medal=medal)
         if ret =="":break

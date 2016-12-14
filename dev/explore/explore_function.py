@@ -33,7 +33,7 @@ def chapter_choose(chapter = 17):
             if ret != "":
                 break
         for i in range(0,10):
-            ret = find_pic_loop(chapter, click_en=0, sim=0.7, times=5)
+            ret = find_pic_loop(chapter, click_en=0, sim=0.6, times=5)
             if ret !="":
                 scene_chang_handle("explore/exploreflag2.bmp", chapter, tryTimes=30)
                 return 1

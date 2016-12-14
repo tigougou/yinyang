@@ -2,6 +2,7 @@ import threading,time
 from explore.explore_function import *
 from explore.glb import *
 from util.dm import *
+from bre.break_personal import *
 from bre.Break_yy_function import *
 import multiprocessing
 from multiprocessing import Manager,Value
@@ -20,6 +21,7 @@ from explore.log import *
 '''
 全局变量
 '''
+personal_break_en = 1
 chapter_times = 100000
 yy_break_en = True
 explore_en = True
@@ -152,20 +154,24 @@ class yyBreakThread(multiprocessing.Process):
 
 
 """
-突破线程
+个人突破线程
 
-暂时不能添加
 突破流程：
 var:
 """
 class breakThread(multiprocessing.Process):
-    def __init__(self):
+    def __init__(self, simulater_num, times, medal):
         multiprocessing.Process.__init__(self)
         pid = os.getpid()
+        self.simulater_num = simulater_num
+        self.times = times
+        self.medal = medal
         #self.daemon = True
     def run(self):
-        #首先判定锁是否被占用，若占用则堵塞，等待锁的释放
         print("waiting breakTread start...")
+        bind(self.simulater_num)
+        autobreak_personal(self.times,self.medal)
+        unbind_window()
 """
 任务分发主线程
 
@@ -180,9 +186,11 @@ class mainThread(QThread):
         super().__init__()
         self.explore_thread = None
         self.yy_break_thread = None
+        self.personal_break = None
         self.friend_target_thread = friendTarget(num=simulater_num)
         #self.break_thread = None
     def run(self):
+        global personal_break_en
         global cur_power
         global explore_mutex
         global yy_break_en
@@ -199,6 +207,7 @@ class mainThread(QThread):
         power_get_first = 1
         power_get_second = 1
         last_yy_break_time = datetime.datetime.now() - datetime.timedelta(seconds= 800)
+        last_personal_break_time = datetime.datetime.now() - datetime.timedelta(seconds= 800)
         self.main_thread_window_bind()
         print('main thread pid: ' + str(os.getpid()))
         time.sleep(5)
@@ -245,8 +254,13 @@ class mainThread(QThread):
                 cur_break_ticket = get_cur_break_ticket()
                 print('cur_power: ' + str(cur_power))
                 print('cur_ticket: ' + str(cur_break_ticket))
-                if(cur_break_ticket >= 9):
+                if(cur_break_ticket >= 3 and (cur_time - last_personal_break_time).seconds > 610 and personal_break_en):
                     print("start breaking")
+                    self.personal_break = breakThread(simulater_num, 3, 3)
+                    time.sleep(5)
+                    self.personal_break.start()
+                    self.personal_break.join()
+                    last_personal_break_time = datetime.datetime.now()
                 if cur_power >= 24 and explore_en:
                     #体力大于等于20，创建新的探索线程对象，开始线程
                     print("create explore_thread")
@@ -277,6 +291,10 @@ class mainThread(QThread):
             if(self.yy_break_thread.is_alive()):
                 print('killing yybreak')
                 self.yy_break_thread.terminate()
+        if(self.personal_break != None):
+            if(self.personal_break.is_alive()):
+                print('killing personal_break')
+                self.personal_break.terminate()
         if(self.friend_target_thread != None):
             if(self.friend_target_thread.is_alive()):
                 print('killing friend_target_thread')
@@ -325,7 +343,6 @@ class Example(QWidget):
         self.initUI()
         self.main_thread = None
         self.yaoqi_monster_type = 0
-
         self.yaoqi_thread = None
 
 
@@ -401,6 +418,11 @@ class Example(QWidget):
         self.power_get_check_box = QCheckBox('体力领取')
         self.power_get_check_box.toggle()
         self.power_get_check_box.stateChanged.connect(self.power_get_change)
+        #个人突破checkbox
+        self.personal_break_check_box = QCheckBox('个人突破')
+        self.personal_break_check_box.toggle()
+        self.personal_break_check_box.stateChanged.connect(self.personal_break_change)
+
         #最后一行
         hbox = QHBoxLayout()
         hbox.addWidget(self.startBtn)
@@ -442,6 +464,10 @@ class Example(QWidget):
         hbox_power_get = QHBoxLayout()
         hbox_power_get.addWidget(self.power_get_check_box)
         hbox_power_get.addStretch(1)
+        #第七行
+        hbox_personal_break = QHBoxLayout()
+        hbox_personal_break.addWidget(self.personal_break_check_box)
+        hbox_personal_break.addStretch(1)
         #整体布局
 
         vbox = QVBoxLayout()
@@ -451,6 +477,7 @@ class Example(QWidget):
         vbox.addLayout(hbox_yy)
         vbox.addLayout(hbox_explore)
         vbox.addLayout(hbox_power_get)
+        vbox.addLayout(hbox_personal_break)
         vbox.addStretch(1)
         vbox.addLayout(hbox)
         self.setLayout(vbox)
@@ -458,6 +485,10 @@ class Example(QWidget):
         self.setGeometry(300, 300, 400, 200)
         self.setWindowTitle('tigougou')
         self.show()
+    def personal_break_change(self):
+        global personal_break_en
+        personal_break_en = not personal_break_en
+        print('个人探索： ' + str(personal_break_en))
     def yaoqi_combo_changed(self, type):
         self.yaoqi_monster_type = type[0]
         print('妖气封印类型改变为： ' + self.yaoqi_monster_type)
@@ -578,6 +609,10 @@ class Example(QWidget):
                 if(self.main_thread.yy_break_thread.is_alive()):
                     p = psutil.Process(self.main_thread.yy_break_thread.pid)
                     p.suspend()
+            if(self.main_thread.peronal_break_thread != None):
+                if(self.main_thread.peronal_break_thread.is_alive()):
+                    p = psutil.Process(self.main_thread.peronal_break_thread.pid)
+                    p.suspend()
             if(self.main_thread.friend_target_thread != None):
                 if(self.main_thread.friend_target_thread.is_alive()):
                     p = psutil.Process(self.main_thread.friend_target_thread.pid)
@@ -593,6 +628,10 @@ class Example(QWidget):
             if(self.main_thread.yy_break_thread != None):
                 if(self.main_thread.yy_break_thread.is_alive()):
                     p = psutil.Process(self.main_thread.yy_break_thread.pid)
+                    p.resume()
+            if(self.main_thread.peronal_break_thread != None):
+                if(self.main_thread.personal_break.is_alive()):
+                    p = psutil.Process(self.main_thread.peronal_break_thread.pid)
                     p.resume()
             if(self.main_thread.friend_target_thread != None):
                 if(self.main_thread.friend_target_thread.is_alive()):
