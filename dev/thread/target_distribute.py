@@ -228,7 +228,7 @@ class mainThread(QThread):
                     change_scene('explore')
                 #阴阳寮结界判定
                 #时间间隔700s
-                if((cur_time - last_yy_break_time).seconds > 700 and yy_break_en):
+                if((cur_time - last_yy_break_time).seconds > 610 and yy_break_en):
                     print("start yy break")
                     self.yy_break_thread = yyBreakThread(num=simulater_num)
                     time.sleep(5)
@@ -244,7 +244,7 @@ class mainThread(QThread):
                 print('cur_ticket: ' + str(cur_break_ticket))
                 if(cur_break_ticket >= 9):
                     print("start breaking")
-                if cur_power >= 20 and explore_en:
+                if cur_power >= 24 and explore_en:
                     #体力大于等于20，创建新的探索线程对象，开始线程
                     print("create explore_thread")
                     self.explore_thread = exploreThread(num=simulater_num, chapter=chapter_num, difficulty_mode=difficulty_mode)
