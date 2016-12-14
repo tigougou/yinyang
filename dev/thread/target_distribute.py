@@ -6,6 +6,7 @@ from bre.Break_yy_function import *
 import multiprocessing
 from multiprocessing import Manager,Value
 from activity.activity_function import  *
+from activity.team_fight import *
 import datetime
 import sys
 from PyQt5.QtWidgets import (QWidget, QToolTip,
@@ -148,6 +149,8 @@ class yyBreakThread(multiprocessing.Process):
         bind(self.simulater_num)
         autobreak_yy(medal = yy_medal_num)
         unbind_window()
+
+
 """
 突破线程
 
@@ -291,7 +294,23 @@ class mainThread(QThread):
             print('unbind success')
 
 
+"""
+妖气封印子线程
+var:
 
+"""
+class yaoqiThread(multiprocessing.Process):
+    def __init__(self, type, times, simulater):
+        self.monster_type = type
+        self.times = times
+        self.simulater = simulater
+        pid = os.getpid()
+        super().__init__()
+    def run(self):
+        bind(self.simulater)
+        for i in range(self.times):
+            autoteamfight(fight_type=5, monster_type_or_leve= self.monster_type)
+        unbind_window()
 #图形化界面
 
 
@@ -302,9 +321,12 @@ class Example(QWidget):
 
     def __init__(self):
         super().__init__()
-
+        self.yaoqi_times = 1
         self.initUI()
         self.main_thread = None
+        self.yaoqi_monster_type = 0
+
+        self.yaoqi_thread = None
 
 
     def initUI(self):
@@ -354,6 +376,20 @@ class Example(QWidget):
         self.yy_check_box.stateChanged.connect(self.yy_change)
         self.yy_label = QLabel('奖牌数')
         self.yy_combo = QComboBox()
+        #妖气封印
+        self.yaoqifengyin_combo = QComboBox()
+        monster_type = ['0：经验妖怪','1：金币妖怪','2：鬼使黑','3：海坊主','4：椒图','5：跳跳哥哥','6：二口女','7：骨女','6：饿鬼']
+        for type in monster_type:
+            self.yaoqifengyin_combo.addItem(type)
+        self.yaoqifengyin_combo.activated[str].connect(self.yaoqi_combo_changed)
+        self.yaoqifengyin_label = QLabel('次数')
+        self.yaoqifengyin_line = QLineEdit()
+        self.yaoqifengyin_line.setText(str(self.yaoqi_times))
+        self.yaoqifengyin_line.textChanged[str].connect(self.yaoqi_times_changed)
+        self.yaoqifengyin_line.setFixedWidth(50)
+        self.yaoqi_start_btn = QPushButton('开始封印')
+        self.yaoqi_start_btn.clicked.connect(self.yaoqi_start)
+
         for i in range(6):
             self.yy_combo.addItem("%d" % i)
         self.yy_combo.activated[str].connect(self.yy_combo_change)
@@ -370,6 +406,7 @@ class Example(QWidget):
         hbox.addWidget(self.startBtn)
         hbox.addWidget(self.pause_btn)
         hbox.addStretch(1)
+
         #第一行
         hbox_chapter = QHBoxLayout()
         hbox_chapter.addWidget(self.chapter_label)
@@ -377,6 +414,10 @@ class Example(QWidget):
         hbox_chapter.addWidget(self.chapter_num_label)
         hbox_chapter.addWidget(self.chapter_times_text)
         hbox_chapter.addStretch(1)
+        hbox_chapter.addWidget(self.yaoqifengyin_combo)
+        hbox_chapter.addWidget(self.yaoqifengyin_label)
+        hbox_chapter.addWidget(self.yaoqifengyin_line)
+        hbox_chapter.addWidget(self.yaoqi_start_btn)
         #第二行
         hbox_simulater = QHBoxLayout()
         hbox_simulater.addWidget(self.simulater_label)
@@ -414,15 +455,39 @@ class Example(QWidget):
         vbox.addLayout(hbox)
         self.setLayout(vbox)
 
-        self.setGeometry(300, 300, 300, 200)
+        self.setGeometry(300, 300, 400, 200)
         self.setWindowTitle('tigougou')
         self.show()
+    def yaoqi_combo_changed(self, type):
+        self.yaoqi_monster_type = type[0]
+        print('妖气封印类型改变为： ' + self.yaoqi_monster_type)
+    def yaoqi_times_changed(self, times):
+        if times.isdigit():
+            self.yaoqi_times = int(times)
+        else:
+            self.yaoqifengyin_line.setText(self.yaoqi_times)
+        print('妖气封印次数改变为： ' + str(self.yaoqi_times))
+    def yaoqi_start(self):
+        global simulater_num
+        sender = self.sender()
+        if(sender.text() == '开始封印'):
+            print('开始封印')
+            self.yaoqi_thread = yaoqiThread(self.yaoqi_monster_type,self.yaoqi_times,simulater_num)
+            self.yaoqi_thread.start()
+            sender.setText('停止封印')
+        else:
+            if(self.yaoqi_thread != None):
+                if(self.yaoqi_thread.is_alive()):
+                    print('killing explore')
+                    self.yaoqi_thread.terminate()
+            sender.setText('开始封印')
+
     def chapter_times_changed(self, times):
         global chapter_times
         if times.isdigit():
             chapter_times = int(times)
         else:
-            self.chapter_times_text.setText('-1')
+            self.chapter_times_text.setText('100000')
             chapter_times = 100000
 
         print('突破次数：' + str(chapter_times))
@@ -468,6 +533,10 @@ class Example(QWidget):
             except Exception:
                 explore_mutex.release()
                 print('get main quit except')
+            if(self.yaoqi_thread != None):
+                if(self.yaoqi_thread.is_alive()):
+                    print('killing explore')
+                    self.yaoqi_thread.terminate()
             event.accept()
 
     #开启线程处理程序
