@@ -17,12 +17,32 @@ Raises:
 """
 def chapter_choose(chapter = 17):
     """本函数调用前需要任务在探索场景下"""
-
     #需要滚动来选定章节
-
     chapter = "explore/chapter-" + str(chapter)+".bmp"
-    print(chapter)
-    scene_chang_handle("explore/exploreflag2.bmp", chapter, tryTimes=20)
+    ret = find_pic_loop(chapter, click_en=0,sim=0.8, times=10)
+    if ret !="":
+        scene_chang_handle("explore/exploreflag2.bmp", chapter, tryTimes=20)
+        return 1
+    else:
+        for i in range(0,10):
+            moveto(1172,151)
+            left_down()
+            moveto(1172,622)
+            left_up()
+            ret = find_pic_loop("explore/chapter-1.bmp", click_en=0, sim=0.7, times=3)
+            if ret != "":
+                break
+        for i in range(0,10):
+            ret = find_pic_loop(chapter, click_en=0, sim=0.7, times=5)
+            if ret !="":
+                scene_chang_handle("explore/exploreflag2.bmp", chapter, tryTimes=30)
+                return 1
+            moveto(1172, 400)
+            left_down()
+            moveto(1172, 151)
+            left_up()
+        return 0
+
 """"""
 """
 进入探索副本功能函数
@@ -71,7 +91,7 @@ def find_monster(monster_type):
     #准备
     if ret == 0:
         return 0
-    scene_chang_handle("explore/fightreadyflag.bmp", "explore/fightready.bmp", delaytime=0.1, sim=0.8, tryTimes=200)
+    scene_chang_handle("explore/fightreadyflag.bmp", "explore/fightready.bmp|explore/fightready1.bmp", delaytime=0.1, sim=0.7, tryTimes=200)
     #攻击优先级
     moveto(970, 270)
     left_click()

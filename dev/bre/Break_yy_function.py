@@ -26,11 +26,11 @@ Raises:
 """
 def break_yy_judge():
     """本函数在阴阳寮选择界面下使用"""
-    ret = find_pic_loop("break/breakopenflag.bmp|break/breakopenflag1.bmp",times=10, click_en = 0)
+    ret = find_pic_loop("weigongda2.bmp",times=10, click_en = 0)
     ret = ret.split('|')
     ret = len(ret)
-
-    return 3
+    ret = 3 - ret
+    return ret
 """
 阴阳寮结界选择函数
 Parameters:
@@ -129,7 +129,7 @@ def break_yy_fight():
     #点击攻击按钮
     scene_chang_handle("explore/fightready.bmp","break/fight.bmp|break/fight1.bmp|break/fight3.bmp",delaytime=1, sim=0.6, tryTimes=30)
     #等待准备
-    scene_chang_handle("break/fightreadyflag.bmp", "explore/fightready.bmp", delaytime=0.1, sim=0.7, tryTimes=200)
+    scene_chang_handle("break/fightreadyflag.bmp", "explore/fightready.bmp|explore/fightready1.bmp", delaytime=0.1, sim=0.7, tryTimes=200)
     #攻击优先级
     #moveto(970, 270)
     #left_click()
@@ -139,8 +139,6 @@ def break_yy_fight():
             win_flag = 1
             # scene_chang_handle("explore/fightend_win_gift1.bmp","explore/fightend_win.bmp", delaytime=0.01, sim=0.6, tryTimes=2000)
             click_until_pic("explore/fightend_win_giftopen.bmp")
-            scene_chang_handle("explore/fightend_win_giftopen.bmp", "explore/fightend_win_gift1.bmp", delaytime=0.01,
-                               sim=0.6, tryTimes=2000)
             scene_chang_handle("break/enterbreak_flag.bmp", "explore/fightend_win_giftopen.bmp", delaytime=0.1,
                                tryTimes=2000)
             break
@@ -148,7 +146,7 @@ def break_yy_fight():
         if ret != "":
             win_flag = 0
             break
-    return 1
+    return win_flag
 
 """
 阴阳寮退出 功能函数

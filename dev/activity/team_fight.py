@@ -97,7 +97,7 @@ def autoteamfight(fight_type =5,monster_type_or_leve = 1):
     teamfight_enter()
     if fight_type ==5:
         seal_enter(monster_type = monster_type_or_leve)
-    scene_chang_handle("explore/fightreadyflag.bmp", "explore/fightready.bmp", delaytime=0.1, sim=0.8, tryTimes=300)
+    scene_chang_handle("explore/fightreadyflag.bmp", "explore/fightready.bmp|explore/fightready1.bmp", delaytime=0.1, sim=0.7, tryTimes=300)
     # 攻击优先级
 
     # 进行攻击成功判断
