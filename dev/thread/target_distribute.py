@@ -85,7 +85,7 @@ class friendTarget(multiprocessing.Process):
         print("start friendTarget process")
         while(1):
             find_pic_loop('process/denial.bmp',offsetx=261,offsety=367,wait_delta=3)
-            find_pic_loop('process/power_buy.bmp',offsetx=0,offsety=0,wait_delta=3)
+            find_pic_loop('process/power_buy.bmp|process/groupinvite.bmp',offsetx=0,offsety=0,wait_delta=3)
 
 
 """
@@ -111,8 +111,11 @@ class exploreThread(multiprocessing.Process):
         global explore_mutex
         print("cur_power = " + str(cur_power))
         print('explore pid: ' + str(os.getpid()))
-
-        bind(self.simulater_num)
+        time.sleep(2)
+        for i in range(10):
+            ret = bind(self.simulater_num)
+            if(ret != 0):
+                break
         print("waiting explore start...")
         if explore_mutex.acquire():
             print("start exploring")
@@ -256,7 +259,7 @@ class mainThread(QThread):
                 print('cur_ticket: ' + str(cur_break_ticket))
                 if(cur_break_ticket >= 3 and (cur_time - last_personal_break_time).seconds > 610 and personal_break_en):
                     print("start breaking")
-                    self.personal_break = breakThread(simulater_num, 3, 3)
+                    self.personal_break = breakThread(simulater_num, 3, 4)
                     time.sleep(5)
                     self.personal_break.start()
                     self.personal_break.join()
@@ -600,45 +603,47 @@ class Example(QWidget):
         sender = self.sender()
         print('sender is ' + sender.text())
         if(sender.text() == 'pause'):
-            if(self.main_thread.explore_thread != None):
-                if(self.main_thread.explore_thread.is_alive()):
-                    print('进程暂停  进程编号 %s ' %(self.main_thread.explore_thread.pid))
-                    p = psutil.Process(self.main_thread.explore_thread.pid)
-                    p.suspend()
-            if(self.main_thread.yy_break_thread != None):
-                if(self.main_thread.yy_break_thread.is_alive()):
-                    p = psutil.Process(self.main_thread.yy_break_thread.pid)
-                    p.suspend()
-            if(self.main_thread.peronal_break_thread != None):
-                if(self.main_thread.peronal_break_thread.is_alive()):
-                    p = psutil.Process(self.main_thread.peronal_break_thread.pid)
-                    p.suspend()
-            if(self.main_thread.friend_target_thread != None):
-                if(self.main_thread.friend_target_thread.is_alive()):
-                    p = psutil.Process(self.main_thread.friend_target_thread.pid)
-                    p.suspend()
-            self.main_thread.main_thread_window_unbind()
-            sender.setText('continue')
+            if(self.main_thread != None):
+                if(self.main_thread.explore_thread != None):
+                    if(self.main_thread.explore_thread.is_alive()):
+                        print('进程暂停  进程编号 %s ' %(self.main_thread.explore_thread.pid))
+                        p = psutil.Process(self.main_thread.explore_thread.pid)
+                        p.suspend()
+                if(self.main_thread.yy_break_thread != None):
+                    if(self.main_thread.yy_break_thread.is_alive()):
+                        p = psutil.Process(self.main_thread.yy_break_thread.pid)
+                        p.suspend()
+                if(self.main_thread.personal_break != None):
+                    if(self.main_thread.personal_break.is_alive()):
+                        p = psutil.Process(self.main_thread.personal_break.pid)
+                        p.suspend()
+                if(self.main_thread.friend_target_thread != None):
+                    if(self.main_thread.friend_target_thread.is_alive()):
+                        p = psutil.Process(self.main_thread.friend_target_thread.pid)
+                        p.suspend()
+                self.main_thread.main_thread_window_unbind()
+                sender.setText('continue')
         elif(sender.text() == 'continue'):
-            if(self.main_thread.explore_thread != None):
-                if(self.main_thread.explore_thread.is_alive()):
-                    print('进程继续  进程编号 %s ' %(self.main_thread.explore_thread.pid))
-                    p = psutil.Process(self.main_thread.explore_thread.pid)
-                    p.resume()
-            if(self.main_thread.yy_break_thread != None):
-                if(self.main_thread.yy_break_thread.is_alive()):
-                    p = psutil.Process(self.main_thread.yy_break_thread.pid)
-                    p.resume()
-            if(self.main_thread.peronal_break_thread != None):
-                if(self.main_thread.personal_break.is_alive()):
-                    p = psutil.Process(self.main_thread.peronal_break_thread.pid)
-                    p.resume()
-            if(self.main_thread.friend_target_thread != None):
-                if(self.main_thread.friend_target_thread.is_alive()):
-                    p = psutil.Process(self.main_thread.friend_target_thread.pid)
-                    p.resume()
-            time.sleep(5)
-            self.main_thread.main_thread_window_bind()
+            if(self.main_thread != None):
+                if(self.main_thread.explore_thread != None):
+                    if(self.main_thread.explore_thread.is_alive()):
+                        print('进程继续  进程编号 %s ' %(self.main_thread.explore_thread.pid))
+                        p = psutil.Process(self.main_thread.explore_thread.pid)
+                        p.resume()
+                if(self.main_thread.yy_break_thread != None):
+                    if(self.main_thread.yy_break_thread.is_alive()):
+                        p = psutil.Process(self.main_thread.yy_break_thread.pid)
+                        p.resume()
+                if(self.main_thread.personal_break != None):
+                    if(self.main_thread.personal_break.is_alive()):
+                        p = psutil.Process(self.main_thread.personal_break.pid)
+                        p.resume()
+                if(self.main_thread.friend_target_thread != None):
+                    if(self.main_thread.friend_target_thread.is_alive()):
+                        p = psutil.Process(self.main_thread.friend_target_thread.pid)
+                        p.resume()
+                time.sleep(5)
+                self.main_thread.main_thread_window_bind()
             sender.setText('pause')
 
 

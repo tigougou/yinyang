@@ -2,8 +2,12 @@ from util.dm import *
 from explore.glb import *
 import time
 
-def bind(simulater):
-    return WindowBind(simulater)
+def bind(simulater, times = 3):
+    for i in range(times):
+        ret = WindowBind(simulater)
+        if(ret != 0):
+            return ret
+    return 0
 def log(hwnd,account = "",password = "",region = 0):
     #切换大区
     #find = find_pic_loop(r"log/qiehuan.bmp", click_en=1,offsetx=332, offsety=-2, wait_delta=1, times=5)
