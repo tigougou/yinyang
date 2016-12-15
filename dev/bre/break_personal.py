@@ -18,7 +18,15 @@ def break_person_enter():
     ret = find_pic_loop("break/refresh.bmp",times=30)
     if(ret == ""):
         return 0
-    scene_chang_handle("break/norefreshflag.bmp", "break/refreshconfirm.bmp", delaytime=1, tryTimes=30)
+    ret = find_pic_loop("break/refreshconfirm.bmp",times=30)
+    if ret == "":
+        return 0
+    ret = find_pic_loop("break/fight.bmp|break/fight1.bmp|break/fight2.bmp|break/fight3.bmp",  click_en=0, sim=0.6, times=10, wait_delta=0.1)
+    if ret == "":
+        moveto(1,1)
+        left_click()
+        return 2
+    #scene_chang_handle("break/norefreshflag.bmp", "break/refreshconfirm.bmp", delaytime=1, tryTimes=30)
     return 1
 """
 个人结界突破选择函数
@@ -52,6 +60,7 @@ def break_person_choose(medal = 0):
                 break
         else:
             break
+    time.sleep(2)
     return ret
 """
 个人结界突破选择函数

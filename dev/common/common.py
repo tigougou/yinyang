@@ -37,7 +37,7 @@ def scene_chang_handle(state_next,pic_click,delaytime = 1,sim = 0.8,tryTimes = 3
             print("pic_click success")
             return 1
     print("pic_click_fail")
-    #return 0
+    return 0
     os._exit(2)
 """
 回合开始处理功能函数

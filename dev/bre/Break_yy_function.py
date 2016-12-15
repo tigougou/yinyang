@@ -26,8 +26,7 @@ Raises:
 """
 def break_yy_judge():
     """本函数在阴阳寮选择界面下使用"""
-    ret = find_pic_loop("break/weigongda2.bmp",sim = 0.7,times=10, click_en = 0)
-
+    ret = find_pic_loop("break/weigongda2.bmp",times=10, click_en = 0, sim=0.7)
     if ret =="":return 3
     ret = ret.split('|')
     ret = len(ret)
@@ -131,7 +130,7 @@ def break_yy_fight():
     """本函数在阴阳寮攻击对象已选择界面下使用"""
 
     #点击攻击按钮
-    scene_chang_handle("explore/fightready.bmp","break/fight.bmp|break/fight1.bmp|break/fight3.bmp",delaytime=1, sim=0.6, tryTimes=30)
+    scene_chang_handle("explore/fightready.bmp","break/fight1.bmp|break/fight2.bmp|break/fight3.bmp",delaytime=1, sim=0.6, tryTimes=30)
     #等待准备
     scene_chang_handle("break/fightreadyflag.bmp", "explore/fightready.bmp|explore/fightready1.bmp", delaytime=0.1, sim=0.7, tryTimes=200)
     #攻击优先级
@@ -161,7 +160,7 @@ Returns：
 失败：0
 """
 def break_yy_out():
-    scene_chang_handle("break/enterbreak.bmp", "break/breakout.bmp", delaytime=0.1,tryTimes=2000)
+    scene_chang_handle("break/enterbreak.bmp", "break/breakout.bmp", delaytime=0.1,tryTimes=2000, sim=0.6)
 
 """"""""""
 阴阳寮结界突破 自动突破函数
