@@ -19,28 +19,39 @@ def chapter_choose(chapter = 17):
     """本函数调用前需要任务在探索场景下"""
     #需要滚动来选定章节
     chapter = "explore/chapter-" + str(chapter)+".bmp"
-    ret = find_pic_loop(chapter, click_en=0,sim=0.8, times=10)
+    ret = find_pic_loop(chapter, click_en=0,sim=0.8, times=5)
     if ret !="":
         scene_chang_handle("explore/exploreflag2.bmp", chapter, tryTimes=20)
         return 1
     else:
-        for i in range(0,10):
-            moveto(1172,151)
+        for i in range(0,30):
+            time.sleep(0.3)
+            moveto(1172,210)
             left_down()
-            moveto(1172,622)
+            time.sleep(0.1)
+            moveto(1172, 290)
+            time.sleep(0.1)
+            moveto(1172, 370)
             left_up()
-            ret = find_pic_loop("explore/chapter-1.bmp", click_en=0, sim=0.8, times=3)
+            ret = find_pic_loop("explore/chapter-1.bmp", click_en=0, sim=0.8, times=7)
             if ret != "":
                 break
-        for i in range(0,10):
-            ret = find_pic_loop(chapter, click_en=0, sim=0.6, times=5)
+            ret = find_pic_loop(chapter, click_en=0, sim=0.8, times=5)
+            if ret != "":
+                break
+        for i in range(0,30):
+            ret = find_pic_loop(chapter, click_en=0, sim=0.8, times=10)
             if ret !="":
-                scene_chang_handle("explore/exploreflag2.bmp", chapter, tryTimes=30)
+                scene_chang_handle("explore/exploreflag2.bmp", chapter,sim=0.7, tryTimes=30)
                 return 1
-            moveto(1172, 400)
+            moveto(1172, 370)
             left_down()
-            moveto(1172, 151)
+            time.sleep(0.1)
+            moveto(1172, 290)
+            time.sleep(0.1)
+            moveto(1172, 210)
             left_up()
+            time.sleep(0.3)
         return 0
 
 """"""

@@ -35,9 +35,12 @@ Returns:
 Raises:
 """
 def seal_enter(monster_type =2):
+
     scene_chang_handle("teamfight/sealenterflag.bmp", "teamfight/sealenter.bmp", delaytime=1, sim=0.8, tryTimes=30)
     while(1):
         while(1):
+            print("monster_type:"+str(monster_type))
+            monster_type = int(monster_type)
             if monster_type == 0:
                 find_pic_loop("teamfight/jingyanyaoguai.bmp", click_en=1, offsetx=524, offsety=31,sim=0.8, times=10)
             elif monster_type ==1:
@@ -94,6 +97,7 @@ Returns:
 Raises:
 """
 def autoteamfight(fight_type =5,monster_type_or_leve = 1):
+    print(monster_type_or_leve)
     teamfight_enter()
     if fight_type ==5:
         seal_enter(monster_type = monster_type_or_leve)

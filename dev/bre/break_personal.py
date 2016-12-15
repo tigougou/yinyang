@@ -32,17 +32,17 @@ Raises:
 """
 def break_person_choose(medal = 0):
     for i in range(1,5):
-        ret = find_pic_loop("break/medal0.bmp", times=1, wait_delta=0.1)
+        ret = find_pic_loop("break/medal0.bmp", sime = 0.7,times=1, wait_delta=0.1)
         if (ret =="")&(medal > 0):
-            ret = find_pic_loop("break/medal1.bmp", times=1, wait_delta=0.1)
+            ret = find_pic_loop("break/medal1.bmp",sime = 0.7, times=1, wait_delta=0.1)
             if (ret =="")&(medal>1):
-                ret = find_pic_loop("break/medal2.bmp", times=1, wait_delta=0.1)
+                ret = find_pic_loop("break/medal2.bmp", sime = 0.7,times=1, wait_delta=0.1)
                 if (ret == "")&(medal >2):
-                    ret = find_pic_loop("break/medal3.bmp", times=1, wait_delta=0.1)
+                    ret = find_pic_loop("break/medal3.bmp",sime = 0.7, times=1, wait_delta=0.1)
                     if (ret == "")& (medal > 3):
-                        ret = find_pic_loop("break/medal4.bmp", times=1, wait_delta=0.1)
+                        ret = find_pic_loop("break/medal4.bmp",sime = 0.7, times=1, wait_delta=0.1)
                         if (ret == "") & (medal > 4):
-                            ret = find_pic_loop("break/medal5.bmp", times=1, wait_delta=0.1)
+                            ret = find_pic_loop("break/medal5.bmp",sime = 0.7, times=1, wait_delta=0.1)
                             break
                     else:
                         break
