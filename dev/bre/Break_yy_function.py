@@ -110,7 +110,7 @@ def break_yy_fightchoose( medal = 0,level = 0):
             time.sleep(2)
    #判断等级（根据奖牌数量的坐标寻找）
     time.sleep(2)
-    ret = find_pic_loop("break/fight.bmp|break/fight1.bmp|break/fight2.bmp|break/fight3.bmp",  click_en=0, sim=0.8, times=10, wait_delta=0.1)
+    ret = find_pic_loop("break/fight.bmp|break/fight1.bmp|break/fight2.bmp|break/fight3.bmp",  click_en=0, sim=0.6, times=10, wait_delta=0.1)
     if ret == "":
         moveto(1,1)
         left_click()

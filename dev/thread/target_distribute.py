@@ -142,17 +142,17 @@ class exploreThread(multiprocessing.Process):
 var:
 """
 class yyBreakThread(multiprocessing.Process):
-    def __init__(self,num = 1):
+    def __init__(self,num = 1,yy_medal_num = 4):
         multiprocessing.Process.__init__(self)
         pid = os.getpid()
         self.simulater_num = num
+        self.yy_medal_num = yy_medal_num
         #self.daemon = True
     def run(self):
         #首先判定锁是否被占用，若占用则堵塞，等待锁的释放
         print("yy breakTread start...")
-        global yy_medal_num
         bind(self.simulater_num)
-        autobreak_yy(medal = yy_medal_num)
+        autobreak_yy(medal = self.yy_medal_num)
         unbind_window()
 
 
@@ -203,6 +203,7 @@ class mainThread(QThread):
         global simulater_num
         global chapter_num
         global difficulty_mode
+        global yy_medal_num
         yaoguaituizhi_first = 1
         yaoguaituizhi_second = 1
         yaoguaituizhi_gift_first = 1
@@ -245,7 +246,7 @@ class mainThread(QThread):
                 #时间间隔700s
                 if((cur_time - last_yy_break_time).seconds > 610 and yy_break_en):
                     print("start yy break")
-                    self.yy_break_thread = yyBreakThread(num=simulater_num)
+                    self.yy_break_thread = yyBreakThread(num=simulater_num, yy_medal_num= yy_medal_num)
                     time.sleep(5)
                     self.yy_break_thread.start()
                     self.yy_break_thread.join()

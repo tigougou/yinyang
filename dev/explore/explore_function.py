@@ -97,7 +97,7 @@ def find_monster(monster_type):
     left_click()
     # 进行攻击成功判断
     while(1):
-        ret = find_pic_loop("explore/fightend_win.bmp", sim=0.8,click_en = 1, times=1, wait_delta=0.1)
+        ret = find_pic_loop("explore/fightend_win.bmp", sim=0.7,click_en = 1, times=1, wait_delta=0.1)
         if ret !="":
             win_flag = 1
             #scene_chang_handle("explore/fightend_win_gift1.bmp","explore/fightend_win.bmp", delaytime=0.01, sim=0.6, tryTimes=2000)
@@ -106,7 +106,7 @@ def find_monster(monster_type):
             #scene_chang_handle("explore/fightend_win_giftopen.bmp", "explore/fightend_win_gift1.bmp", delaytime=0.01, sim=0.6,tryTimes=2000)
             scene_chang_handle("explore/exploreEnterflag.bmp","explore/fightend_win_giftopen.bmp", delaytime=0.1, tryTimes=2000)
             break
-        ret = find_pic_loop("explore/fightend_fail.bmp", success_image = "explore/exploreEnterflag.bmp", sim=0.8, click_en=1, times=1, wait_delta=0.1)
+        ret = find_pic_loop("explore/fightend_fail.bmp", success_image = "explore/exploreEnterflag.bmp", sim=0.7, click_en=1, times=1, wait_delta=0.1)
         if ret !="":
             win_flag = 0
             break
