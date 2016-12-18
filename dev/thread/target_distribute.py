@@ -260,7 +260,7 @@ class mainThread(QThread):
                 print('cur_ticket: ' + str(cur_break_ticket))
                 if(cur_break_ticket >= 3 and (cur_time - last_personal_break_time).seconds > 610 and personal_break_en):
                     print("start breaking")
-                    self.personal_break = breakThread(simulater_num, 3, 4)
+                    self.personal_break = breakThread(simulater_num, 3, 5)
                     time.sleep(5)
                     self.personal_break.start()
                     self.personal_break.join()
