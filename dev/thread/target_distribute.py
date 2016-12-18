@@ -369,6 +369,7 @@ class Example(QWidget):
         self.pause_btn.setToolTip('暂停全部线程')
         self.pause_btn.resize(self.pause_btn.sizeHint())
         self.pause_btn.clicked.connect(self.pause_process)
+        self.pause_btn.setEnabled(False)
         #章节选择标签
         self.chapter_label = QLabel('章节数')
         #章节选择combobox
@@ -615,6 +616,7 @@ class Example(QWidget):
             self.main_thread = mainThread()
             self.main_thread.start()
             sender.setText('stop')
+            self.pause_btn.setEnabled(True)
         elif(sender.text() == 'stop'):
             #unbind_window()
             #print('unbind_success!')
@@ -626,6 +628,8 @@ class Example(QWidget):
                     explore_mutex.release()
                     print('get main quit except')
             sender.setText('start')
+            self.pause_btn.setEnabled(False)
+            self.pause_btn.setText('pause')
 
     #暂停线程处理程序
     def pause_process(self):
