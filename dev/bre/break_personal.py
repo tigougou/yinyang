@@ -20,6 +20,8 @@ def break_person_enter():
         return 0
     scene_chang_handle("break/norefreshflag.bmp", "break/refreshconfirm.bmp", delaytime=1, tryTimes=30)
     return 1
+
+
 """
 个人结界突破选择函数
 从奖牌低到高攻打
@@ -30,6 +32,7 @@ Returns：
   失败：0
 Raises:
 """
+
 def break_person_choose(medal = 0):
     for i in range(1,5):
         ret = find_pic_loop("break/medal0.bmp", sim = 0.8,times=1, wait_delta=0.1)
@@ -82,8 +85,10 @@ def break_person_fight():
     """本函数在阴阳寮攻击对象已选择界面下使用"""
 
     #点击攻击按钮
-    ret = scene_chang_handle("explore/fightready.bmp|explore/fightready1.bmp","break/p_fight.bmp|break/p_fight1.bmp|break/p_fight2.bmp|break/p_fight3.bmp",delaytime=1, sim=0.8, tryTimes=10)
-    print (ret)
+    for i in range(50):
+        find_pic_loop("break/p_fight.bmp", x1=118, y1=69, x2=1152, y2=527, click_en=1, sim=0.8, times=2 )
+        ret = find_pic_loop("explore/fightready.bmp|explore/fightready1.bmp", click_en=0, sim=0.8, times=2)
+        if ret == 1:break
     if ret ==0:return 2
     #等待准备
     ret = scene_chang_handle("break/fightreadyflag.bmp", "explore/fightready.bmp|explore/fightready1.bmp", delaytime=0.1, sim=0.8, tryTimes=50)
@@ -123,14 +128,17 @@ Raises
 """
 
 
-def autobreak_personal(number = 9,medal = 3):
+def autobreak_personal(number = 9,medal = 5):
     win_number = 0
     ret = break_person_enter()
+    if ret ==0:
+       break_yy_out()
+       return 0
     for i in(0,number):
         ret = break_person_choose(medal=medal)
         if ret =="":break
         ret = break_person_fight()
-        if ret ==2:break
+        if ret ==2|ret ==0:break
         else:win_number = win_number +1
         if win_number==3|win_number == 6| win_number == 9:
             click_until_pic("explore/fightend_win_giftopen.bmp")
