@@ -21,6 +21,8 @@ from explore.log import *
 '''
 全局变量
 '''
+personal_break_medal = 0
+personal_break_times = 3
 personal_break_en = 1
 chapter_times = 100000
 yy_break_en = True
@@ -204,6 +206,8 @@ class mainThread(QThread):
         global chapter_num
         global difficulty_mode
         global yy_medal_num
+        global personal_break_medal
+        global personal_break_times
         yaoguaituizhi_first = 1
         yaoguaituizhi_second = 1
         yaoguaituizhi_gift_first = 1
@@ -260,7 +264,7 @@ class mainThread(QThread):
                 print('cur_ticket: ' + str(cur_break_ticket))
                 if(cur_break_ticket >= 3 and (cur_time - last_personal_break_time).seconds > 610 and personal_break_en):
                     print("start breaking")
-                    self.personal_break = breakThread(simulater_num, 3, 5)
+                    self.personal_break = breakThread(simulater_num, personal_break_times, personal_break_medal)
                     time.sleep(5)
                     self.personal_break.start()
                     self.personal_break.join()
@@ -426,6 +430,17 @@ class Example(QWidget):
         self.personal_break_check_box = QCheckBox('个人突破')
         self.personal_break_check_box.toggle()
         self.personal_break_check_box.stateChanged.connect(self.personal_break_change)
+        self.personal_label = QLabel('奖牌数')
+        self.personal_combo = QComboBox()
+        for i in range(6):
+            self.personal_combo.addItem("%d" % i)
+        self.personal_combo.activated[str].connect(self.personal_combo_change)
+        self.personal_times_label = QLabel('次数')
+        self.personal_times_combo = QComboBox()
+        self.personal_times_combo.addItem("%d" % 3)
+        self.personal_times_combo.addItem("%d" % 6)
+        self.personal_times_combo.addItem("%d" % 9)
+        self.personal_times_combo.activated[str].connect(self.personal_times_combo_change)
 
         #最后一行
         hbox = QHBoxLayout()
@@ -471,6 +486,10 @@ class Example(QWidget):
         #第七行
         hbox_personal_break = QHBoxLayout()
         hbox_personal_break.addWidget(self.personal_break_check_box)
+        hbox_personal_break.addWidget(self.personal_times_label)
+        hbox_personal_break.addWidget(self.personal_times_combo)
+        hbox_personal_break.addWidget(self.personal_label)
+        hbox_personal_break.addWidget(self.personal_combo)
         hbox_personal_break.addStretch(1)
         #整体布局
 
@@ -526,6 +545,15 @@ class Example(QWidget):
             chapter_times = 100000
 
         print('突破次数：' + str(chapter_times))
+    def personal_combo_change(self, medal):
+        global personal_break_medal
+        personal_break_medal = medal
+        print('个人突破奖牌数： ' + personal_break_medal)
+    def personal_times_combo_change(self, times):
+        global personal_break_times
+        personal_break_times = times
+        print('个人突破每次次数： ' + personal_break_times)
+
     def yy_combo_change(self, medal):
         global yy_medal_num
         yy_medal_num = int(medal)
