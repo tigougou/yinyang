@@ -32,7 +32,7 @@ chapter_num = 1
 difficulty_mode = 0
 simulater_num = 1
 explore_thread = None
-yy_medal_num = 4#奖牌数
+yy_medal_num = 0#奖牌数
 """
 获取当前体力函数
 Parameters:

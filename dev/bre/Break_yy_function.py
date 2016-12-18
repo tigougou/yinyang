@@ -78,6 +78,7 @@ Raises:
 def break_yy_fightchoose( medal = 0,level = 0):
     """本函数在阴阳寮已选择界面下使用"""
     #判断奖牌数量
+    medal = int(medal)
     while (1):
         if medal ==0:
             ret =find_pic_loop("break/medal0.bmp",times=5, wait_delta=0.1, sim=0.8)
@@ -116,6 +117,7 @@ def break_yy_fightchoose( medal = 0,level = 0):
         moveto(1,1)
         left_click()
         return 2
+    else:return 1
 """
 阴阳寮结界突破 攻击函数
 Parameters:
@@ -123,14 +125,15 @@ Parameters:
 Returns：
 成功：1
 失败：0
-
+准备超时：2
 Raises:
 """
 def break_yy_fight():
     """本函数在阴阳寮攻击对象已选择界面下使用"""
 
     #点击攻击按钮
-    scene_chang_handle("explore/fightready.bmp","break/fight1.bmp|break/fight2.bmp|break/fight3.bmp",delaytime=1, sim=0.6, tryTimes=30)
+    ret = scene_chang_handle("explore/fightready.bmp","break/fight1.bmp|break/fight2.bmp|break/fight3.bmp",delaytime=1, sim=0.6, tryTimes=50)
+    if ret ==0:return 2
     #等待准备
     scene_chang_handle("break/fightreadyflag.bmp", "explore/fightready.bmp|explore/fightready1.bmp", delaytime=0.1, sim=0.7, tryTimes=200)
     #攻击优先级
@@ -183,7 +186,11 @@ def autobreak_yy(medal = 0):
             failed_to_find_num += 1
             print("nothing to do")
         elif ret == 1:
-            break_yy_fight()
+            ret = break_yy_fight()
+            if ret ==2:
+                moveto(1, 1)
+                left_click()
+
 
     if(failed_to_find_num > 0 and medal != 5):
         #由于存在寮内未找到对手，将奖牌数提升至最高再找一遍
