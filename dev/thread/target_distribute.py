@@ -404,7 +404,7 @@ class Example(QWidget):
         self.yy_combo = QComboBox()
         #妖气封印
         self.yaoqifengyin_combo = QComboBox()
-        monster_type = ['0：经验妖怪','1：金币妖怪','2：鬼使黑','3：海坊主','4：椒图','5：跳跳哥哥','6：二口女','7：骨女','6：饿鬼']
+        monster_type = ['0：经验妖怪','1：金币妖怪','2：鬼使黑','3：海坊主','4：椒图','5：跳跳哥哥','6：二口女','7：骨女','8：饿鬼']
         for type in monster_type:
             self.yaoqifengyin_combo.addItem(type)
         self.yaoqifengyin_combo.activated[str].connect(self.yaoqi_combo_changed)

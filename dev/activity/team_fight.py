@@ -63,9 +63,9 @@ def seal_enter(monster_type =2):
             ret = find_pic_loop("teamfight/refresh.bmp", click_en=1, sim=0.8, times=20)
             if ret =="":break
         while(1):
-            ret = find_pic_loop("teamfight/teamflag.bmp|explore/fightready.bmp", click_en=0, sim=0.8, times=1)
+            ret = find_pic_loop("teamfight/teamflag.bmp|explore/fightready.bmp|explore/fightready1.bmp", click_en=0, sim=0.8, times=1)
             if ret !="":
-                ret = find_pic_loop("explore/fightready.bmp", click_en=0, sim=0.8, times=400)
+                ret = find_pic_loop("explore/fightready.bmp|explore/fightready1.bmp", click_en=0, sim=0.8, times=400)
                 if ret != "":return 1
 
 """

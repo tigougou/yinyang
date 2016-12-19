@@ -34,6 +34,7 @@ Raises:
 """
 
 def break_person_choose(medal = 0):
+    medal = int(medal)
     for i in range(1,5):
         ret = find_pic_loop("break/medal0.bmp", sim = 0.8,times=1, wait_delta=0.1)
         if (ret =="")&(medal > 0):
@@ -88,7 +89,7 @@ def break_person_fight():
     for i in range(50):
         find_pic_loop("break/p_fight.bmp", x1=118, y1=69, x2=1152, y2=527, click_en=1, sim=0.8, times=2 )
         ret = find_pic_loop("explore/fightready.bmp|explore/fightready1.bmp", click_en=0, sim=0.8, times=2)
-        if ret == 1:break
+        if ret != "":break
     if ret ==0:return 2
     #等待准备
     ret = scene_chang_handle("break/fightreadyflag.bmp", "explore/fightready.bmp|explore/fightready1.bmp", delaytime=0.1, sim=0.8, tryTimes=50)
