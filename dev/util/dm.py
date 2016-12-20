@@ -1,5 +1,6 @@
 import win32com.client
 import time
+import win32process
 regInfoFile = open(r"D:\dm110\regInfo.txt")
 dm = win32com.client.Dispatch('dm.dmsoft')
 print(dm.Ver())
