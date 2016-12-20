@@ -79,7 +79,7 @@ Parameters:
 Returns：
 成功：1
 失败：0
-准备超时：2
+准备超时：2,3
 Raises:
 """
 def break_person_fight():
@@ -90,27 +90,24 @@ def break_person_fight():
         find_pic_loop("break/p_fight.bmp", x1=118, y1=69, x2=1152, y2=527, click_en=1, sim=0.8, times=2 )
         ret = find_pic_loop("explore/fightready.bmp|explore/fightready1.bmp", click_en=0, sim=0.8, times=2)
         if ret != "":break
-    if ret ==0:return 2
+    if ret =="":return 2
     #等待准备
-    ret = scene_chang_handle("break/fightreadyflag.bmp", "explore/fightready.bmp|explore/fightready1.bmp", delaytime=0.1, sim=0.8, tryTimes=50)
-    if ret ==0:return 0
+    ret = scene_chang_handle("break/fightreadyflag.bmp", "explore/fightready.bmp|explore/fightready1.bmp", delaytime=0.1, sim=0.8, tryTimes=500)
+    if ret ==0:return 3
     #攻击优先级
     #moveto(970, 270)
     #left_click()
     while (1):
         ret = find_pic_loop("explore/fightend_win.bmp", sim=0.8, times=1, wait_delta=0.1)
         if ret != "":
-            win_flag = 1
-            # scene_chang_handle("explore/fightend_win_gift1.bmp","explore/fightend_win.bmp", delaytime=0.01, sim=0.6, tryTimes=2000)
             click_until_pic("explore/fightend_win_giftopen.bmp")
-            scene_chang_handle("break/enterbreak_flag.bmp", "explore/fightend_win_giftopen.bmp", delaytime=0.1,
-                               tryTimes=2000)
-            break
+            scene_chang_handle("break/enterbreak_flag.bmp|explore/fightend_win_gift2.bmp", "explore/fightend_win_giftopen.bmp", delaytime=0.1,tryTimes=2000)
+            print("fight win")
+            return 1
         ret = find_pic_loop("explore/fightend_fail.bmp", success_image = "break/enterbreak_flag.bmp",sim = 0.8,times=1, wait_delta=0.1)
         if ret != "":
-            win_flag = 0
-            break
-    return win_flag
+            print("fight fail")
+            return 0
 
 
 
@@ -130,19 +127,23 @@ Raises
 
 
 def autobreak_personal(number = 9,medal = 5):
+    number = int(number)
+    medal = int(medal)
     win_number = 0
     ret = break_person_enter()
     if ret ==0:
        break_yy_out()
        return 0
-    for i in(0,number):
+    for i in range(0,number):
         ret = break_person_choose(medal=medal)
         if ret =="":break
         ret = break_person_fight()
-        if ret ==2|ret ==0:break
-        else:win_number = win_number +1
-        if win_number==3|win_number == 6| win_number == 9:
+        if ret ==2|ret ==3:
+            break
+        elif ret == 1:
+            win_number = win_number + 1
+        if win_number==3:
+            win_number = 0
             click_until_pic("explore/fightend_win_giftopen.bmp")
-            scene_chang_handle("break/enterbreak_flag.bmp", "explore/fightend_win_giftopen.bmp", delaytime=0.1,
-                               tryTimes=2000)
+            scene_chang_handle("break/enterbreak_flag.bmp", "explore/fightend_win_giftopen.bmp", delaytime=0.1,tryTimes=2000)
     break_yy_out()
