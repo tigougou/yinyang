@@ -87,7 +87,7 @@ def break_person_fight():
 
     #点击攻击按钮
     for i in range(50):
-        find_pic_loop("break/p_fight.bmp", x1=118, y1=69, x2=1152, y2=527, click_en=1, sim=0.8, times=2 )
+        find_pic_loop("break/p_fight.bmp", x1=417, y1=251, x2=1152, y2=527, click_en=1, sim=0.8, times=2 )
         ret = find_pic_loop("explore/fightready.bmp|explore/fightready1.bmp", click_en=0, sim=0.8, times=2)
         if ret != "":break
     if ret =="":return 2
