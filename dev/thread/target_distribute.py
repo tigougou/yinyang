@@ -5,7 +5,7 @@ from util.dm import *
 from bre.break_personal import *
 from bre.Break_yy_function import *
 import multiprocessing
-from multiprocessing import Manager,Value
+from multiprocessing import Manager,Value,Array
 from activity.activity_function import  *
 from activity.team_fight import *
 import datetime
@@ -21,6 +21,7 @@ from explore.log import *
 '''
 全局变量
 '''
+arr = Array('i', (0,0,0))# yybreak personalbreak explorebreak
 personal_break_medal = 0
 personal_break_times = 3
 personal_break_en = 1
@@ -111,6 +112,8 @@ class exploreThread(multiprocessing.Process):
         #首先判定锁是否被占用，若占用则堵塞，等待锁的释放
         global cur_power
         global explore_mutex
+        global arr
+        arr[2] = 1
         print("cur_power = " + str(cur_power))
         print('explore pid: ' + str(os.getpid()))
         time.sleep(2)
@@ -151,10 +154,12 @@ class yyBreakThread(multiprocessing.Process):
         self.yy_medal_num = yy_medal_num
         #self.daemon = True
     def run(self):
+        global arr
         #首先判定锁是否被占用，若占用则堵塞，等待锁的释放
         print("yy breakTread start...")
         bind(self.simulater_num)
-        autobreak_yy(medal = self.yy_medal_num)
+        yy_win_times = autobreak_yy(medal = self.yy_medal_num)
+        arr[0] = yy_win_times
         unbind_window()
 
 
@@ -173,9 +178,11 @@ class breakThread(multiprocessing.Process):
         self.medal = medal
         #self.daemon = True
     def run(self):
+        global arr
         print("waiting breakTread start...")
         bind(self.simulater_num)
-        autobreak_personal(self.times,self.medal)
+        ret = autobreak_personal(self.times,self.medal)
+        arr[1] = ret
         unbind_window()
 """
 任务分发主线程
@@ -193,6 +200,9 @@ class mainThread(QThread):
         self.yy_break_thread = None
         self.personal_break = None
         self.friend_target_thread = friendTarget(num=simulater_num)
+        self.yy_break_success_times = 0
+        self.personal_break_success_times = 0
+        self.explore_success_times = 0
         #self.break_thread = None
     def run(self):
         global personal_break_en
@@ -355,6 +365,7 @@ class Example(QWidget):
 
 
     def initUI(self):
+        global arr
 
         QToolTip.setFont(QFont('SansSerif', 10))
 
@@ -442,6 +453,10 @@ class Example(QWidget):
         self.personal_times_combo.addItem("%d" % 6)
         self.personal_times_combo.addItem("%d" % 9)
         self.personal_times_combo.activated[str].connect(self.personal_times_combo_change)
+        #计数提示
+        self.yy_break_cnt_label = QLabel('阴阳寮突破成功次数：' + str(arr[0]))
+        self.personal_break_cnt_label = QLabel('个人突破成功次数：' + str(arr[1]))
+        self.explore_cnt_label = QLabel('探索次数：' + str(arr[2]))
 
         #最后一行
         hbox = QHBoxLayout()
@@ -492,6 +507,12 @@ class Example(QWidget):
         hbox_personal_break.addWidget(self.personal_label)
         hbox_personal_break.addWidget(self.personal_combo)
         hbox_personal_break.addStretch(1)
+        #第八行
+        hbox_cnt = QHBoxLayout()
+        hbox_cnt.addWidget(self.yy_break_cnt_label)
+        hbox_cnt.addWidget(self.personal_break_cnt_label)
+        hbox_cnt.addWidget(self.explore_cnt_label)
+        hbox_personal_break.addStretch(1)
         #整体布局
 
         vbox = QVBoxLayout()
@@ -502,6 +523,7 @@ class Example(QWidget):
         vbox.addLayout(hbox_explore)
         vbox.addLayout(hbox_power_get)
         vbox.addLayout(hbox_personal_break)
+        #vbox.addLayout(hbox_cnt)
         vbox.addStretch(1)
         vbox.addLayout(hbox)
         self.setLayout(vbox)
@@ -692,6 +714,7 @@ class Example(QWidget):
 
 
 if __name__ == '__main__':
+    multiprocessing.freeze_support()
     app = QApplication(sys.argv)
     ex = Example()
     sys.exit(app.exec_())

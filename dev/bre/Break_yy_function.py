@@ -176,6 +176,7 @@ Returns：
 Raises:
 """
 def autobreak_yy(medal = 0):
+    cnt = 0
     failed_to_find_num = 0
     break_yy_enter()
     a = break_yy_judge()
@@ -187,6 +188,8 @@ def autobreak_yy(medal = 0):
             print("nothing to do")
         elif ret == 1:
             ret = break_yy_fight()
+            if ret == 1:
+                cnt += 1
             if ret ==2:
                 moveto(1, 1)
                 left_click()
@@ -203,8 +206,11 @@ def autobreak_yy(medal = 0):
             if ret == 0:
                 print("nothing to do")
             elif ret != 2:
-                break_yy_fight()
+                ret = break_yy_fight()
+                if ret == 1:
+                    cnt += 1
     break_yy_out()
+    return cnt
     """本函数在阴阳寮攻击对象已选择界面下使用"""
 
 

@@ -127,6 +127,7 @@ Raises
 
 
 def autobreak_personal(number = 9,medal = 5):
+    cnt = 0
     number = int(number)
     medal = int(medal)
     win_number = 0
@@ -142,8 +143,10 @@ def autobreak_personal(number = 9,medal = 5):
             break
         elif ret == 1:
             win_number = win_number + 1
+            cnt += 1
         if win_number==3:
             win_number = 0
             click_until_pic("explore/fightend_win_giftopen.bmp")
             scene_chang_handle("break/enterbreak_flag.bmp", "explore/fightend_win_giftopen.bmp", delaytime=0.1,tryTimes=2000)
     break_yy_out()
+    return cnt
