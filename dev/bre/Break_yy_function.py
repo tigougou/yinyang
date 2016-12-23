@@ -48,19 +48,19 @@ def break_yy_choose( number = 1):
     if number == 1:
         for i in range(50):
             find_pic_loop("break/enterbreak_flag.bmp", offsetx=-382, offsety=149,times=30, wait_delta=0.1)
-            ret = find_pic_loop("break/yylchooseflag1.bmp|break/yylchooseflag2.bmp", x1=100, y1=158, x2=175, y2=269,sim=0.8, times=20, click_en=0)
+            ret = find_pic_loop("break/yylchooseflag1.bmp|break/yylchooseflag2.bmp", x1=122, y1=247, x2=159, y2=291,sim=0.8, times=20, click_en=0)
             if ret != "":break
         if(ret == ""): return 0
     elif number == 2:
         for i in range(50):
-            find_pic_loop("break/enterbreak_flag.bmp", offsetx=-382, offsety=220, times=30, wait_delta=0.1)
-            ret = find_pic_loop("break/yylchooseflag1.bmp|break/yylchooseflag2.bmp", x1=100, y1=372, x2=175, y2=444,sim=0.8, times=20, click_en=0)
+            find_pic_loop("break/enterbreak_flag.bmp", offsetx=-382, offsety=315, times=30, wait_delta=0.1)
+            ret = find_pic_loop("break/yylchooseflag1.bmp|break/yylchooseflag2.bmp", x1=122, y1=430, x2=159, y2=470,sim=0.8, times=20, click_en=0)
             if ret !="":break
         if(ret == ""): return 0
     else:
         for i in range(50):
-            find_pic_loop("break/enterbreak_flag.bmp", offsetx=-382, offsety=400, times=30, wait_delta=0.1)
-            ret = find_pic_loop("break/yylchooseflag1.bmp|break/yylchooseflag2.bmp", x1=100, y1=561, x2=175, y2=621,sim=0.8, times=20, click_en=0)
+            find_pic_loop("break/enterbreak_flag.bmp", offsetx=-382, offsety=564, times=30, wait_delta=0.1)
+            ret = find_pic_loop("break/yylchooseflag1.bmp|break/yylchooseflag2.bmp", x1=122, y1=617, x2=151, y2=657,sim=0.8, times=20, click_en=0)
             if ret !="":break
         if(ret == ""): return 0
     #left_click()
