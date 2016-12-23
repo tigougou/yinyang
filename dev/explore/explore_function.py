@@ -152,7 +152,7 @@ Raises:
 def autoexplore(chapter,difficulty_mode = 0):
     enter_explore(chapter = chapter,difficulty_mode=difficulty_mode)
     while (True):
-        ret = find_pic_loop("explore/monster-0.bmp|explore/monster-1.bmp", click_en=0, sim=0.8, times=8, wait_delta=0.1)
+        ret = find_pic_loop("explore/monster-0.bmp|explore/monster-1.bmp", click_en=0, sim=0.8, times=15, wait_delta=0.1)
         if(ret != ""):
             print("找到可以攻击的怪物")
             ret = ret.split('|')
