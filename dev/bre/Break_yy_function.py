@@ -98,7 +98,7 @@ def break_yy_fightchoose( medal = 0,level = 0):
         else:
             ret = find_pic_loop("break/p_chooseflag.bmp", times=5, sim = 0.8,wait_delta=0.1,click_en = 0)
         #未找到 翻页
-        ret = find_pic_loop("break/medal0.bmp|break/medal1.bmp|break/medal2.bmp|break/medal3.bmp|break/medal4.bmp|break/medal5.bmp", click_en = 0,times=5, wait_delta=0.1,sim = 0.7)
+        ret = find_pic_loop("break/medal0.bmp|break/medal1.bmp|break/medal2.bmp|break/medal3.bmp|break/medal4.bmp|break/medal5.bmp", click_en = 0,times=5, wait_delta=0.1,sim = 0.8)
         if ret == "":
             return 0
         else:
