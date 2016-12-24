@@ -48,6 +48,8 @@ def break_person_choose(medal = 0):
                         if (ret == "") & (medal > 4):
                             ret = find_pic_loop("break/medal5.bmp",sim = 0.8, times=1, wait_delta=0.1)
                             break
+                        else:
+                            break
                     else:
                         break
                 else:
@@ -87,8 +89,8 @@ def break_person_fight():
 
     #点击攻击按钮
     for i in range(50):
-        find_pic_loop("break/p_fight.bmp", x1=275, y1=263, x2=1142, y2=547, click_en=1, sim=0.8, times=2 )
-        ret = find_pic_loop("explore/fightready.bmp|explore/fightready1.bmp", click_en=0, sim=0.8, times=2)
+        find_pic_loop("break/p_fight.bmp", x1=275, y1=263, x2=1142, y2=600, click_en=1, sim=0.7, times=20 )
+        ret = find_pic_loop("explore/fightready.bmp|explore/fightready1.bmp", click_en=0, sim=0.6, times=20)
         if ret != "":break
     if ret =="":return 2
     #等待准备
@@ -137,7 +139,7 @@ def autobreak_personal(number = 9,medal = 5):
        return 0
     for i in range(0,number):
         ret = break_person_choose(medal=medal)
-        if ret =="":break
+        if ret == "":break
         ret = break_person_fight()
         if ret ==2|ret ==3|ret ==0:
             break
