@@ -94,7 +94,7 @@ def break_person_fight():
         if ret != "":break
     if ret =="":return 2
     #等待准备
-    ret = scene_chang_handle("break/fightreadyflag.bmp", "explore/fightready.bmp|explore/fightready1.bmp", delaytime=0.1, sim=0.8, tryTimes=500)
+    ret = scene_chang_handle("break/fightreadyflag1.bmp", "explore/fightready.bmp|explore/fightready1.bmp", delaytime=0.1, sim=0.6, tryTimes=500)
     if ret ==0:return 3
     #攻击优先级
     #moveto(970, 270)
@@ -103,7 +103,7 @@ def break_person_fight():
         ret = find_pic_loop("explore/fightend_win.bmp", sim=0.8, times=1, wait_delta=0.1)
         if ret != "":
             click_until_pic("explore/fightend_win_giftopen.bmp")
-            scene_chang_handle("break/enterbreak_flag.bmp|explore/fightend_win_gift2.bmp", "explore/fightend_win_giftopen.bmp", delaytime=0.1,tryTimes=2000)
+            scene_chang_handle("break/enterbreak_flag.bmp|explore/fightend_win_gift2.bmp", "explore/fightend_win_giftopen.bmp", delaytime=0.1,tryTimes=50)
             print("fight win")
             return 1
         ret = find_pic_loop("explore/fightend_fail.bmp", success_image = "break/enterbreak_flag.bmp",sim = 0.8,times=1, wait_delta=0.1)

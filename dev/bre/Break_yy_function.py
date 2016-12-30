@@ -112,7 +112,7 @@ def break_yy_fightchoose( medal = 0,level = 0):
             time.sleep(2)
    #判断等级（根据奖牌数量的坐标寻找）
     time.sleep(2)
-    ret = find_pic_loop("break/fight.bmp|break/fight1.bmp|break/fight2.bmp|break/fight3.bmp",  click_en=0, sim=0.6, times=10, wait_delta=0.1)
+    ret = find_pic_loop("break/fight.bmp|break/fight1.bmp|break/fight2.bmp|break/fight3.bmp",  click_en=0, sim=0.7, times=10, wait_delta=0.1)
     if ret == "":
         moveto(1,1)
         left_click()
@@ -132,10 +132,10 @@ def break_yy_fight():
     """本函数在阴阳寮攻击对象已选择界面下使用"""
 
     #点击攻击按钮
-    ret = scene_chang_handle("explore/fightready.bmp","break/fight1.bmp|break/fight2.bmp|break/fight3.bmp",delaytime=1, sim=0.6, tryTimes=50)
+    ret = scene_chang_handle("explore/fightready.bmp","break/fight1.bmp|break/fight2.bmp|break/fight3.bmp",delaytime=1, sim=0.7, tryTimes=50)
     if ret ==0:return 2
     #等待准备
-    scene_chang_handle("break/fightreadyflag.bmp", "explore/fightready.bmp|explore/fightready1.bmp", delaytime=0.1, sim=0.7, tryTimes=200)
+    scene_chang_handle("break/fightreadyflag1.bmp", "explore/fightready.bmp|explore/fightready1.bmp", delaytime=0.1, sim=0.6, tryTimes=200)
     #攻击优先级
     #moveto(970, 270)
     #left_click()
@@ -163,7 +163,7 @@ Returns：
 失败：0
 """
 def break_yy_out():
-    scene_chang_handle("break/enterbreak.bmp", "break/breakout.bmp", delaytime=0.1,tryTimes=2000, sim=0.6)
+    scene_chang_handle("break/enterbreak.bmp", "break/breakout.bmp", delaytime=0.1,tryTimes=2000, sim=0.8)
 
 """"""""""
 阴阳寮结界突破 自动突破函数

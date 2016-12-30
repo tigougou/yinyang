@@ -102,10 +102,11 @@ def find_monster(monster_type):
     #准备
     if ret == 0:
         return 0
-    scene_chang_handle("explore/fightreadyflag.bmp", "explore/fightready.bmp|explore/fightready1.bmp", delaytime=0.1, sim=0.7, tryTimes=200)
+    scene_chang_handle("break/fightreadyflag1.bmp", "explore/fightready.bmp|explore/fightready1.bmp", delaytime=0.1, sim=0.6, tryTimes=200)
     #攻击优先级
-    moveto(970, 270)
-    left_click()
+
+        #moveto(970, 270)
+        #left_click()
     # 进行攻击成功判断
     while(1):
         ret = find_pic_loop("explore/fightend_win.bmp", sim=0.7,click_en = 1, times=1, wait_delta=0.1)
