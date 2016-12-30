@@ -47,7 +47,7 @@ Raises:
 """
 def get_cur_power():
     # 获取当前体力
-    str = get_str(764,17,808,41,color="b@2a1909-101010",sim=0.9)
+    str = get_str(967,17,1009,42,color="b@2a1909-101010",sim=0.9)
     if(str != ""):
         power = int(str)
         return power
@@ -64,7 +64,7 @@ Raises:
 """
 def get_cur_break_ticket():
     #获取当前结界突破票数
-    str = get_str(989,16,1024,42,color="b@2a1909-101010",sim=0.9)
+    str = get_str(780,14,820,40,color="b@2a1909-101010",sim=0.9)
     if(str != ""):
         ticket = int(str)
         return ticket
@@ -348,6 +348,126 @@ class yaoqiThread(multiprocessing.Process):
             autoteamfight(fight_type=5, monster_type_or_leve= self.monster_type)
         unbind_window()
 #图形化界面
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 """
