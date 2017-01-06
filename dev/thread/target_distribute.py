@@ -47,7 +47,7 @@ Raises:
 """
 def get_cur_power():
     # 获取当前体力
-    str = get_str(967,17,1009,42,color="b@2a1909-101010",sim=0.9)
+    str = get_str(966,17,1009,42,color="b@2a1909-101010",sim=0.89)
     if(str != ""):
         power = int(str)
         return power
@@ -64,7 +64,7 @@ Raises:
 """
 def get_cur_break_ticket():
     #获取当前结界突破票数
-    str = get_str(780,14,820,40,color="b@2a1909-101010",sim=0.9)
+    str = get_str(784,18,820,40,color="b@2a1909-101010",sim=0.8)
     if(str != ""):
         ticket = int(str)
         return ticket
@@ -348,124 +348,6 @@ class yaoqiThread(multiprocessing.Process):
             autoteamfight(fight_type=5, monster_type_or_leve= self.monster_type)
         unbind_window()
 #图形化界面
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -840,6 +722,15 @@ if __name__ == '__main__':
     sys.exit(app.exec_())
     # explore_thread = exploreThread()
     # explore_thread.start()
+    # bind(2)
+    # for i in range(50):
+    #     find_pic_loop('process/cezhi.bmp')
+    #     find_pic_loop('process/cezhigoumai.bmp')
+    #     find_pic_loop('process/cezhisuccess.bmp', click_en=0)
+    #     moveto(1,1)
+    #     left_click()
+    # unbind_window()
+
 
 
 

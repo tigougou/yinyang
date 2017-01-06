@@ -9,6 +9,11 @@ dm.SetPath("D:\dm110")
 dm.SetDict(0,"process\dm_soft.txt")
 dm.UseDict(0)
 dm_ret = dm.Reg(regInfoList[0],regInfoList[1])
+
+def log(log_str):
+    file = open(r'C:\log.c','a')
+    file.write(log_str + '\n')
+    file.close()
 """
 绑定模拟器函数
 Parameters:
@@ -182,6 +187,36 @@ def get_str(x1, y1, x2, y2, color = "000000-000000", sim = 0.9):
     return dm.Ocr(x1, y1, x2, y2, color, sim)
 def unbind_window():
     return dm.UnBindWindow()
+
+
+
+
+"""
+指定hwnd绑定逍遥模拟器函数
+Parameters:
+  hwnd - 逍遥模拟器hwnd
+  mode - 0-绑定模拟器 1-绑定游戏
+Returns:
+  成功：返回
+  失败：返回 0
+Raises:
+"""
+def WindowBindXiaoYao(hwnd, mode=0):
+    if mode == 0:
+        hwnd = dm.EnumWindow(hwnd,"Qt5QWindowIcon","RenderWindowWindow",0)
+        print("find xiaoyao! hwnd: " + str(hwnd))
+        hwnds = hwnd.split(',')
+        for id in hwnds:
+            #print(str(id) + ": " + dm.GetWindowClass(id) + " titile: " + dm.GetWindowTitle(id))
+            if (dm.GetWindowClass(id) == "Qt5QWindowIcon" and dm.GetWindowTitle(id) == "RenderWindowWindow"):
+                ret = dm.BindWindowEx(id, "dx.graphic.opengl", "dx", "dx", "dx", 0)
+                if (ret != 0):
+                    print("bind success!")
+                    return id
+                else:
+                    print("bind failed")
+                    return 0
+
 
 
 
